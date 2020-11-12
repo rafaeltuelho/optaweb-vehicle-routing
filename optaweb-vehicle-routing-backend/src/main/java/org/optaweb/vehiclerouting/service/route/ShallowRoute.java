@@ -67,7 +67,8 @@ public class ShallowRoute {
     public String toString() {
         String route = Stream.concat(Stream.of(depotId), visitIds.stream())
                 .map(Object::toString)
-                .collect(joining("->", "[", "]"));
+                // add the evacuationCenterId as the last "incident" in the trip
+                .collect(joining("->", "[", " --> " + depotId + "]"));
         return vehicleId + ": " + route;
     }
 }

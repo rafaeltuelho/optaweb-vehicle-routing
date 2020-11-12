@@ -37,7 +37,7 @@ public class PlanningDepot {
     @Override
     public String toString() {
         return "PlanningDepot{" +
-                "location=" + location.getId() +
+                "location=" + location +
                 '}';
     }
 }

@@ -21,11 +21,15 @@ import java.util.Objects;
 import org.optaweb.vehiclerouting.plugin.planner.domain.DistanceMap;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningLocation;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides distances to {@link PlanningLocation}s by reading from a {@link DistanceMatrixRow}.
  */
 public class DistanceMapImpl implements DistanceMap {
+
+    private static final Logger logger = LoggerFactory.getLogger(DistanceMapImpl.class);
 
     private final DistanceMatrixRow distanceMatrixRow;
 
@@ -35,6 +39,8 @@ public class DistanceMapImpl implements DistanceMap {
 
     @Override
     public long distanceTo(PlanningLocation location) {
+        //logger.debug("distanceTo ({}) is '{}' millis", location, distanceMatrixRow.distanceTo(location.getId()).millis());
         return distanceMatrixRow.distanceTo(location.getId()).millis();
     }
+    
 }

@@ -16,10 +16,15 @@
 
 package org.optaweb.vehiclerouting.service.distance;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections4.MapUtils;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrix;
@@ -116,4 +121,21 @@ class DistanceMatrixImpl implements DistanceMatrix {
     public int dimension() {
         return matrix.size();
     }
+
+	@Override
+	public String toString() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String utf8 = StandardCharsets.UTF_8.name();
+        String str = "";
+        PrintStream ps;
+		try {
+			ps = new PrintStream(baos, true, utf8);
+            MapUtils.debugPrint(ps, "DistanceMatrix", this.matrix);
+            str = baos.toString(utf8);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+        return "DistanceMatrix: \n" + str;
+	}    
 }

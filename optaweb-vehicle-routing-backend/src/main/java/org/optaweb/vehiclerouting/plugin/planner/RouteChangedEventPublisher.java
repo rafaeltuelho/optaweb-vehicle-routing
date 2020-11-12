@@ -65,6 +65,8 @@ class RouteChangedEventPublisher {
                 solution.getVisitList().size(),
                 event.distance(),
                 solution.getScore());
+
+        logger.debug("Solution: {}", solution);
         logger.debug("Routes: {}", event.routes());
         eventPublisher.publishEvent(event);
     }

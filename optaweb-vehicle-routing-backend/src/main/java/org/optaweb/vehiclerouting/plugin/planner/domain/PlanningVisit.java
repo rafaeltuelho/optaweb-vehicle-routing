@@ -137,9 +137,11 @@ public class PlanningVisit implements Standstill {
     @Override
     public String toString() {
         return "PlanningVisit{" +
-                (location == null ? "" : "location=" + location.getId()) +
+                // (location == null ? "" : "location=" + location.getId()) +
+                (location == null ? "" : "location=" + location )+
                 ",demand=" + demand +
-                (previousStandstill == null ? "" : ",previousStandstill='" + previousStandstill.getLocation().getId()) +
+                // (previousStandstill == null ? "" : ",previousStandstill=" + previousStandstill.getLocation().getId()) +
+                (previousStandstill == null ? "" : ",previousStandstill=" + previousStandstill) +
                 (nextVisit == null ? "" : ",nextVisit=" + nextVisit.getId()) +
                 (vehicle == null ? "" : ",vehicle=" + vehicle.getId()) +
                 ",id=" + id +

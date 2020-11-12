@@ -20,6 +20,8 @@ set -e
 # either openstreetmap or graphhopper dir is empty.
 shopt -s nullglob
 
+JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseStringDeduplication"
+
 function confirm() {
   declare -l answer # -l converts the value to lower-case before it's assigned
   read -r -p "$1 [y/N]: " answer
@@ -108,7 +110,7 @@ function run_optaweb() {
   else
     [[ ${cc_list} != "??" ]] && args+=("--app.region.country-codes=$cc_list")
   fi
-  java -jar "$jar" "${args[@]}"
+  java ${JAVA_OPTS} -jar "$jar" "${args[@]}"
 }
 
 function download() {
@@ -374,7 +376,13 @@ This script can download it for you from Geofabrik.de."
 # Change dir to the project root (where the script is located).
 # This is needed to correctly resolve .VRP_DIR_LAST, path to the standalone JAR, etc.
 # in case the script was called from a different location than the project root.
-cd "$(dirname "$(readlink -f "$0")")"
+if command -v greadlink > /dev/null 2>&1
+then
+  #echo "executing greadlink..."
+  cd "$(dirname "$(greadlink -f "$0")")"
+else
+  cd "$(dirname "$(readlink -f "$0")")"
+fi
 
 readonly last_vrp_dir_file=.DATA_DIR_LAST
 
@@ -397,7 +405,7 @@ echo "VRP dir: $vrp_dir"
 
 if [[ ! -d ${vrp_dir} ]]
 then
-  confirm "VRP dir ‘$vrp_dir’ does not exist. Do you want to create it now?" || abort
+  confirm "VRP dir "$vrp_dir" does not exist. Do you want to create it now?" || abort
   mkdir ${vrp_dir} || {
     echo >&2 "Cannot create VRP directory ‘$vrp_dir’."
     exit 1
