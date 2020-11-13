@@ -59,6 +59,7 @@ class DataSetMarshallerTest {
         assertThat(dataSet.getName()).isEqualTo("Belgium test");
         assertThat(dataSet.getDepot()).isNotNull();
         assertThat(dataSet.getDepot().getLabel()).isEqualTo("Brussels");
+        assertThat(dataSet.getDepot().getType()).isEqualTo(LocationType.DEPOT);
         assertThat(dataSet.getDepot().getLatitude()).isEqualTo(50.85);
         assertThat(dataSet.getDepot().getLongitude()).isEqualTo(4.35);
         assertThat(dataSet.getVisits())

@@ -45,7 +45,7 @@ class PortableRouteTest {
     @Test
     void marshal_to_json() throws IOException {
         PortableVehicle vehicle = new PortableVehicle(13, "Vehicle", 45317);
-        PortableLocation depot = visit(8, LocationType.VISIT, 42.6501218, -71.8835449, "Test depot");
+        PortableLocation depot = visit(8, LocationType.DEPOT, 42.6501218, -71.8835449, "Test depot");
         PortableLocation visit1 = visit(100, LocationType.VISIT, 42.7066596, -72.4934873, "Visit 1");
         PortableLocation visit2 = visit(200, LocationType.VISIT, 42.5543343, -71.4438280, "Visit 2");
 

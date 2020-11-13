@@ -16,6 +16,8 @@
 
 package org.optaweb.vehiclerouting.domain;
 
+import java.util.Objects;
+
 /**
  * A unique location significant to the user.
  */
@@ -55,22 +57,19 @@ public class Location extends LocationData {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (int) (id ^ (id >>> 32));
-        return result;
+        return Objects.hash(id, type);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         Location other = (Location) obj;
         if (id != other.id)
+            return false;
+        if (type != other.type)
             return false;
 
         return true;

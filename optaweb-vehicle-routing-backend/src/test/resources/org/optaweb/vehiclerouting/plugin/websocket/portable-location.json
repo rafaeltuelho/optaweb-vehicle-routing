@@ -1,5 +1,6 @@
 {
   "id": 987,
+  "type": "VISIT",
   "lat": 1.0,
   "lng": 10.0,
   "description": "Some Location"
