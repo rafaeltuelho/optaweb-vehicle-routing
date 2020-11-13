@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -52,8 +53,8 @@ class LocationRepositoryIntegrationTest {
         final BigDecimal minLongitude = maxLongitude.negate();
         final String description = "...";
 
-        LocationEntity minLocation = new LocationEntity(0, minLatitude, minLongitude, description);
-        LocationEntity maxLocation = new LocationEntity(0, maxLatitude, maxLongitude, description);
+        LocationEntity minLocation = new LocationEntity(0, LocationType.VISIT, minLatitude, minLongitude, description);
+        LocationEntity maxLocation = new LocationEntity(0, LocationType.VISIT, maxLatitude, maxLongitude, description);
         assertThat(crudRepository.save(minLocation).getId()).isNotZero();
         assertThat(crudRepository.save(maxLocation).getId()).isNotZero();
 
@@ -65,7 +66,7 @@ class LocationRepositoryIntegrationTest {
     void remove_created_location() {
         Coordinates coordinates = Coordinates.valueOf(0.00213, 32.777);
         assertThat(crudRepository.count()).isZero();
-        Location location = repository.createLocation(coordinates, "");
+        Location location = repository.createLocation(LocationType.VISIT, coordinates, "");
         assertThat(location.coordinates()).isEqualTo(coordinates);
         assertThat(crudRepository.count()).isOne();
 
@@ -85,7 +86,7 @@ class LocationRepositoryIntegrationTest {
     void get_and_remove_all_locations() {
         int locationCount = 8;
         for (int i = 0; i < locationCount; i++) {
-            repository.createLocation(Coordinates.valueOf(1.0, i / 100.0), "");
+            repository.createLocation(LocationType.VISIT, Coordinates.valueOf(1.0, i / 100.0), "");
         }
 
         assertThat(crudRepository.count()).isEqualTo(locationCount);
@@ -97,6 +98,7 @@ class LocationRepositoryIntegrationTest {
                 .orElseThrow(IllegalStateException::new);
         Location testLocation = new Location(
                 testEntity.getId(),
+                testEntity.getype(),
                 new Coordinates(testEntity.getLatitude(), testEntity.getLongitude()));
 
         assertThat(repository.locations())

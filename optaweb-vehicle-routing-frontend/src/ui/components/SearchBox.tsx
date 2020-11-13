@@ -16,7 +16,7 @@
 
 import '@patternfly/patternfly/patternfly.css';
 import { Button, Text, TextContent, TextInput, TextVariants } from '@patternfly/react-core';
-import { PlusSquareIcon } from '@patternfly/react-icons';
+import { PlusSquareIcon, EnterpriseIcon } from '@patternfly/react-icons';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import * as React from 'react';
 import { LatLng } from 'store/route/types';
@@ -74,6 +74,7 @@ class SearchBox extends React.Component<Props, State> {
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleDepotClick = this.handleDepotClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -127,6 +128,16 @@ class SearchBox extends React.Component<Props, State> {
     // TODO focus text input
   }
 
+  handleDepotClick(index: number) {
+    this.props.addHandler(this.state.results[index]);
+    this.setState({
+      query: '',
+      results: [],
+      attributions: [],
+    });
+    // TODO focus text input
+  }
+
   render() {
     const { attributions, query, results } = this.state;
     return (
@@ -155,6 +166,15 @@ class SearchBox extends React.Component<Props, State> {
                       data-cy={`geosearch-location-item-button-${index}`}
                     >
                       <PlusSquareIcon />
+                    </Button>
+                    <Button
+                      className="pf-c-options-menu__menu-item-icon"
+                      variant="link"
+                      type="button"
+                      onClick={() => this.handleDepotClick(index)}
+                      data-cy={`geosearch-location-item-button-${index}`}
+                    >
+                      <EnterpriseIcon />
                     </Button>
                   </div>
                 </li>

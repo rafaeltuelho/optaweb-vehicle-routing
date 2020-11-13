@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
 import org.optaweb.vehiclerouting.service.location.LocationRepository;
@@ -58,7 +59,7 @@ class ReloadServiceTest {
     private final Vehicle vehicle = VehicleFactory.createVehicle(193, "Vehicle 193", 100);
     private final List<Vehicle> persistedVehicles = Arrays.asList(vehicle, vehicle);
     private final Coordinates coordinates = Coordinates.valueOf(0.0, 1.0);
-    private final Location location = new Location(1, coordinates);
+    private final Location location = new Location(1, LocationType.VISIT, coordinates);
     private final List<Location> persistedLocations = Arrays.asList(location, location, location);
 
     @Test

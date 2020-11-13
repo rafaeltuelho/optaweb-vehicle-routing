@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.plugin.planner.DistanceMapImpl;
 
 class PlanningLocationTest {
@@ -37,7 +38,7 @@ class PlanningLocationTest {
         long otherId = 321;
         long millis = 777777;
         distanceMap.put(otherId, Distance.ofMillis(millis));
-        Location domainLocation = new Location(1, Coordinates.valueOf(0, 0));
+        Location domainLocation = new Location(1, LocationType.VISIT, Coordinates.valueOf(0, 0));
 
         PlanningLocation planningLocation = new PlanningLocation(
                 domainLocation.id(),

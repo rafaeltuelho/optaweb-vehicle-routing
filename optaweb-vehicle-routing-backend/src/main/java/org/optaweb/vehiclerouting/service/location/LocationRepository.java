@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 /**
  * Defines repository operations on locations.
@@ -30,11 +31,12 @@ public interface LocationRepository {
     /**
      * Create a location with a unique ID.
      *
+     * @param type location's type
      * @param coordinates location's coordinates
      * @param description description of the location
      * @return a new location
      */
-    Location createLocation(Coordinates coordinates, String description);
+    Location createLocation(LocationType type, Coordinates coordinates, String description);
 
     /**
      * Get all locations.

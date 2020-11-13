@@ -21,9 +21,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 /**
  * Persistable location.
@@ -41,16 +45,19 @@ class LocationEntity {
     @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
+    @Enumerated(EnumType.STRING)
+    private LocationType type;
     private String description;
 
     protected LocationEntity() {
         // for JPA
     }
 
-    LocationEntity(long id, BigDecimal latitude, BigDecimal longitude, String description) {
+    LocationEntity(long id, LocationType type, BigDecimal latitude, BigDecimal longitude, String description) {
         this.id = id;
         this.latitude = Objects.requireNonNull(latitude);
         this.longitude = Objects.requireNonNull(longitude);
+        this.type = Objects.requireNonNull(type);
         this.description = Objects.requireNonNull(description);
     }
 
@@ -66,6 +73,10 @@ class LocationEntity {
         return longitude;
     }
 
+    LocationType getype() {
+        return type;
+    }
+
     String getDescription() {
         return description;
     }
@@ -76,7 +87,9 @@ class LocationEntity {
                 "id=" + id +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", type=" + type +
                 ", description='" + description + '\'' +
                 '}';
     }
+    
 }

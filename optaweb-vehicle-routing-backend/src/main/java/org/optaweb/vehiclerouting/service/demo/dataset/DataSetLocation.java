@@ -18,11 +18,14 @@ package org.optaweb.vehiclerouting.service.demo.dataset;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.optaweb.vehiclerouting.domain.LocationType;
+
 /**
  * Data set location.
  */
 class DataSetLocation {
 
+    private LocationType type;
     private String label;
     @JsonProperty(value = "lat")
     private double latitude;
@@ -33,10 +36,24 @@ class DataSetLocation {
         // for unmarshalling
     }
 
-    DataSetLocation(String label, double latitude, double longitude) {
+    DataSetLocation(LocationType type, String label, double latitude, double longitude) {
+        this.type = type;
         this.latitude = latitude;
         this.longitude = longitude;
         this.label = label;
+    }
+
+    /**
+     * Location type.
+     *
+     * @return type
+     */
+    public LocationType getType() {
+        return type;
+    }
+
+    public void setType(LocationType type) {
+        this.type = type;
     }
 
     /**
@@ -81,7 +98,8 @@ class DataSetLocation {
     @Override
     public String toString() {
         return "DataSetLocation{" +
-                "label='" + label + '\'' +
+                "type=" + type +
+                ", label='" + label + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';

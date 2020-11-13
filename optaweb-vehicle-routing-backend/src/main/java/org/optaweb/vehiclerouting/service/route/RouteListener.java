@@ -123,7 +123,7 @@ public class RouteListener implements ApplicationListener<RouteChangedEvent> {
         ArrayList<Location> itinerary = new ArrayList<>();
         itinerary.add(depot);
         itinerary.addAll(route);
-        itinerary.add(depot);
+        itinerary.add(depot); // TODO: must change if the vehicles don't need to go back to depot 
         List<List<Coordinates>> paths = new ArrayList<>();
         for (int i = 0; i < itinerary.size() - 1; i++) {
             Location fromLocation = itinerary.get(i);

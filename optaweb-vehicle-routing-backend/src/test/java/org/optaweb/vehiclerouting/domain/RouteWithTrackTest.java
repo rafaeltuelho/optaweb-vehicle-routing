@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 class RouteWithTrackTest {
 
     private final Vehicle vehicle = VehicleFactory.testVehicle(4);
-    private final Location depot = new Location(1, Coordinates.valueOf(5, 5));
-    private final Location visit1 = new Location(2, Coordinates.valueOf(5, 5));
-    private final Location visit2 = new Location(3, Coordinates.valueOf(5, 5));
+    private final Location depot =  new Location(1, LocationType.DEPOT, Coordinates.valueOf(5, 5));
+    private final Location visit1 = new Location(2, LocationType.VISIT, Coordinates.valueOf(5, 5));
+    private final Location visit2 = new Location(3, LocationType.VISIT, Coordinates.valueOf(5, 5));
 
     @Test
     void constructor_args_not_null() {

@@ -41,6 +41,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningDepot;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVehicle;
@@ -52,9 +53,9 @@ import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
 class RouteOptimizerImplTest {
 
     private final DistanceMatrixRow matrixRow = locationId -> Distance.ZERO;
-    private final Location location1 = new Location(1, Coordinates.valueOf(1.0, 0.1));
-    private final Location location2 = new Location(2, Coordinates.valueOf(0.2, 2.2));
-    private final Location location3 = new Location(3, Coordinates.valueOf(3.4, 5.6));
+    private final Location location1 = new Location(1, LocationType.VISIT, Coordinates.valueOf(1.0, 0.1));
+    private final Location location2 = new Location(2, LocationType.DEPOT, Coordinates.valueOf(0.2, 2.2));
+    private final Location location3 = new Location(3, LocationType.OTHER, Coordinates.valueOf(3.4, 5.6));
 
     @Captor
     private ArgumentCaptor<VehicleRoutingSolution> solutionArgumentCaptor;

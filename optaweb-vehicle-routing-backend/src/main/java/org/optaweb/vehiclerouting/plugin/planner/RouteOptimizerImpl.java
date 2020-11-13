@@ -31,6 +31,8 @@ import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVisitFactory;
 import org.optaweb.vehiclerouting.plugin.planner.domain.SolutionFactory;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
 import org.optaweb.vehiclerouting.service.location.RouteOptimizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +43,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 class RouteOptimizerImpl implements RouteOptimizer {
+    private static final Logger logger = LoggerFactory.getLogger(RouteOptimizerImpl.class);
 
     private final SolverManager solverManager;
     private final RouteChangedEventPublisher routeChangedEventPublisher;
@@ -63,12 +66,12 @@ class RouteOptimizerImpl implements RouteOptimizer {
         // Unfortunately can't start solver with an empty solution (see https://issues.redhat.com/browse/PLANNER-776)
         if (depot == null) {
             depot = new PlanningDepot(location);
-            publishSolution();
+            publishSolution(); // publish just to update the view on client-side (front-end)
         } else {
             PlanningVisit visit = PlanningVisitFactory.fromLocation(location);
             visits.add(visit);
             if (vehicles.isEmpty()) {
-                publishSolution();
+                publishSolution(); // publish just to update the view on client-side (front-end)
             } else if (visits.size() == 1) {
                 solverManager.startSolver(SolutionFactory.solutionFromVisits(vehicles, depot, visits));
             } else {

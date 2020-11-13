@@ -24,6 +24,7 @@ import java.util.stream.StreamSupport;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.service.location.LocationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,9 @@ class LocationRepositoryImpl implements LocationRepository {
     }
 
     @Override
-    public Location createLocation(Coordinates coordinates, String description) {
+    public Location createLocation(LocationType type, Coordinates coordinates, String description) {
         LocationEntity locationEntity = repository.save(
-                new LocationEntity(0, coordinates.latitude(), coordinates.longitude(), description));
+            new LocationEntity(0, type, coordinates.latitude(), coordinates.longitude(), description));
         Location location = toDomain(locationEntity);
         logger.info("Created location {}.", location.fullDescription());
         return location;
@@ -81,6 +82,7 @@ class LocationRepositoryImpl implements LocationRepository {
     private static Location toDomain(LocationEntity locationEntity) {
         return new Location(
                 locationEntity.getId(),
+                locationEntity.getype(),
                 new Coordinates(locationEntity.getLatitude(), locationEntity.getLongitude()),
                 locationEntity.getDescription());
     }

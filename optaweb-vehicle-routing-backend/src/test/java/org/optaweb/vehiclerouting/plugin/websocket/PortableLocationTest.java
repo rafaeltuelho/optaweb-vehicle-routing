@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.springframework.boot.test.json.JacksonTester;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +35,7 @@ class PortableLocationTest {
 
     private final PortableLocation portableLocation = new PortableLocation(
             987,
+            LocationType.VISIT,
             BigDecimal.ONE,
             BigDecimal.TEN,
             "Some Location");
@@ -58,16 +60,16 @@ class PortableLocationTest {
     @Test
     void constructor_params_must_not_be_null() {
         assertThatNullPointerException().isThrownBy(
-                () -> new PortableLocation(1, null, BigDecimal.ZERO, ""));
+                () -> new PortableLocation(1, null, null, BigDecimal.ZERO, ""));
         assertThatNullPointerException().isThrownBy(
-                () -> new PortableLocation(1, BigDecimal.ZERO, null, ""));
+                () -> new PortableLocation(1, null, BigDecimal.ZERO, null, ""));
         assertThatNullPointerException().isThrownBy(
-                () -> new PortableLocation(1, BigDecimal.ZERO, BigDecimal.ZERO, null));
+                () -> new PortableLocation(1, LocationType.VISIT, BigDecimal.ZERO, BigDecimal.ZERO, null));
     }
 
     @Test
     void fromLocation() {
-        Location location = new Location(17, Coordinates.valueOf(5.1, -0.0007), "Hello, world!");
+        Location location = new Location(17, LocationType.DEPOT, Coordinates.valueOf(5.1, -0.0007), "Hello, world!");
         PortableLocation portableLocation = PortableLocation.fromLocation(location);
         assertThat(portableLocation.getId()).isEqualTo(location.id());
         assertThat(portableLocation.getLatitude()).isEqualTo(location.coordinates().latitude());
@@ -82,25 +84,27 @@ class PortableLocationTest {
     @Test
     void equals_hashCode_toString() {
         long id = 123456;
+        LocationType type = LocationType.VISIT;
         String description = "x y";
         BigDecimal lat1 = BigDecimal.valueOf(10.0101);
         BigDecimal lat2 = BigDecimal.valueOf(20.2323);
         BigDecimal lon1 = BigDecimal.valueOf(-8.7);
         BigDecimal lon2 = BigDecimal.valueOf(-7.8);
-        PortableLocation portableLocation = new PortableLocation(id, lat1, lon1, description);
+        PortableLocation portableLocation = new PortableLocation(id, type, lat1, lon1, description);
 
         assertThat(portableLocation)
                 // equals()
                 .isNotEqualTo(null)
-                .isNotEqualTo(new Location(id, new Coordinates(lat1, lon1)))
-                .isNotEqualTo(new PortableLocation(id + 1, lat1, lon1, description))
-                .isNotEqualTo(new PortableLocation(id, lat1, lon2, description))
-                .isNotEqualTo(new PortableLocation(id, lat2, lon1, description))
-                .isNotEqualTo(new PortableLocation(id, lat1, lon1, "y x"))
+                .isNotEqualTo(new Location(id, type, new Coordinates(lat1, lon1)))
+                .isNotEqualTo(new PortableLocation(id + 1, type, lat1, lon1, description))
+                .isNotEqualTo(new PortableLocation(id, type, lat1, lon2, description))
+                .isNotEqualTo(new PortableLocation(id, type, lat2, lon1, description))
+                .isNotEqualTo(new PortableLocation(id, LocationType.DEPOT, lat2, lon1, description))
+                .isNotEqualTo(new PortableLocation(id, type, lat1, lon1, "y x"))
                 .isEqualTo(portableLocation)
-                .isEqualTo(new PortableLocation(id, lat1, lon1, description))
+                .isEqualTo(new PortableLocation(id, type, lat1, lon1, description))
                 // hasCode()
-                .hasSameHashCodeAs(new PortableLocation(id, lat1, lon1, description))
+                .hasSameHashCodeAs(new PortableLocation(id, type, lat1, lon1, description))
                 // toString()
                 .asString()
                 .contains(

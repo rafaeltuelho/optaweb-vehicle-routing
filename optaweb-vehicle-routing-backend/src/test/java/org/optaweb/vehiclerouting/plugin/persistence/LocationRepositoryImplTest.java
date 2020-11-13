@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 @ExtendWith(MockitoExtension.class)
 class LocationRepositoryImplTest {
@@ -45,11 +46,12 @@ class LocationRepositoryImplTest {
     @Captor
     private ArgumentCaptor<LocationEntity> locationEntityCaptor;
 
-    private final Location testLocation = new Location(76, Coordinates.valueOf(1.2, 3.4), "description");
+    private final Location testLocation = new Location(76, LocationType.VISIT, Coordinates.valueOf(1.2, 3.4), "description");
 
     private static LocationEntity locationEntity(Location location) {
         return new LocationEntity(
                 location.id(),
+                location.type(),
                 location.coordinates().latitude(),
                 location.coordinates().longitude(),
                 location.description());
@@ -60,15 +62,17 @@ class LocationRepositoryImplTest {
         // arrange
         LocationEntity newEntity = locationEntity(testLocation);
         when(crudRepository.save(locationEntityCaptor.capture())).thenReturn(newEntity);
+        LocationType savedType = LocationType.VISIT;
         Coordinates savedCoordinates = Coordinates.valueOf(0.00213, 32.777);
         String savedDescription = "new location";
 
         // act
-        Location newLocation = repository.createLocation(savedCoordinates, savedDescription);
+        Location newLocation = repository.createLocation(savedType, savedCoordinates, savedDescription);
 
         // assert
         // -- the correct values were used to save the entity
         LocationEntity savedLocation = locationEntityCaptor.getValue();
+        assertThat(savedLocation.getype()).isEqualTo(savedType);
         assertThat(savedLocation.getLatitude()).isEqualTo(savedCoordinates.latitude());
         assertThat(savedLocation.getLongitude()).isEqualTo(savedCoordinates.longitude());
         assertThat(savedLocation.getDescription()).isEqualTo(savedDescription);
@@ -78,6 +82,7 @@ class LocationRepositoryImplTest {
         // The entity instance that is being saved is meant to be discarded. The returned instance should be used
         // for further operations as the save() operation may update it (for example generate the ID).
         assertThat(newLocation.id()).isEqualTo(newEntity.getId());
+        assertThat(newLocation.type()).isEqualTo(newEntity.getype());
         assertThat(newLocation.coordinates())
                 .isEqualTo(new Coordinates(newEntity.getLatitude(), newEntity.getLongitude()));
         assertThat(newLocation.description()).isEqualTo(newEntity.getDescription());

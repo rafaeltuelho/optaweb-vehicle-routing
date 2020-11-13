@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.plugin.planner.DistanceMapImpl;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningDepot;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningLocation;
@@ -49,17 +50,18 @@ class DepotAngleVisitDifficultyWeightFactoryTest {
     private final DepotAngleVisitDifficultyWeightFactory weightFactory = new DepotAngleVisitDifficultyWeightFactory();
 
     DepotAngleVisitDifficultyWeightFactoryTest() {
-        Location depotLocation = new Location(0, Coordinates.valueOf(depotY, depotX));
+        Location depotLocation = new Location(0, LocationType.DEPOT, Coordinates.valueOf(depotY, depotX));
         depot = fromDomain(depotLocation, new DistanceMapImpl(depotDistanceMap::get));
         solution.getDepotList().add(new PlanningDepot(depot));
     }
 
-    private PlanningLocation location(long id, double latitude, double longitude, long symmetricalDistance) {
-        return location(id, latitude, longitude, symmetricalDistance, symmetricalDistance);
+    private PlanningLocation location(long id, LocationType type, double latitude, double longitude, long symmetricalDistance) {
+        return location(id, type, latitude, longitude, symmetricalDistance, symmetricalDistance);
     }
 
     private PlanningLocation location(
             long id,
+            LocationType type,
             double latitude,
             double longitude,
             long depotToLocation,
@@ -67,7 +69,7 @@ class DepotAngleVisitDifficultyWeightFactoryTest {
         depotDistanceMap.put(id, Distance.ofMillis(depotToLocation));
         Map<Long, Distance> locationDistanceMap = new HashMap<>();
         locationDistanceMap.put(depot.getId(), Distance.ofMillis(locationToDepot));
-        Location domainLocation = new Location(id, Coordinates.valueOf(latitude, longitude));
+        Location domainLocation = new Location(id, type, Coordinates.valueOf(latitude, longitude));
         return fromDomain(domainLocation, new DistanceMapImpl(locationDistanceMap::get));
     }
 
@@ -78,24 +80,24 @@ class DepotAngleVisitDifficultyWeightFactoryTest {
     @Test
     void visit_weights_should_be_ordered_by_angle_then_by_distance_then_by_id() {
         // angle 0 (same as west) distance or ID will decide
-        PlanningLocation center1 = location(1, depotY, depotX, 0);
-        PlanningLocation center2 = location(2, depotY, depotX, 0);
-        PlanningLocation west = location(3, depotY, depotX - 100, 1);
+        PlanningLocation center1 = location(1, LocationType.DEPOT, depotY, depotX, 0);
+        PlanningLocation center2 = location(2, LocationType.DEPOT, depotY, depotX, 0);
+        PlanningLocation west = location(3, LocationType.DEPOT, depotY, depotX - 100, 1);
 
         // both east (same angle), distance will decide
         // east1 is closer to depot than east2
-        PlanningLocation east1 = location(10, depotY, depotX + 37, 100);
-        PlanningLocation east2 = location(20, depotY, depotX + 110.011, 200);
+        PlanningLocation east1 = location(10, LocationType.DEPOT, depotY, depotX + 37, 100);
+        PlanningLocation east2 = location(20, LocationType.DEPOT, depotY, depotX + 110.011, 200);
 
         // both north (same angle), distance will decide
         // north1 is closer to depot than north2
-        PlanningLocation north1 = location(30, depotY + 30.0, depotX, 1);
-        PlanningLocation north2 = location(40, depotY + 60.0, depotX, 2);
+        PlanningLocation north1 = location(30, LocationType.DEPOT, depotY + 30.0, depotX, 1);
+        PlanningLocation north2 = location(40, LocationType.DEPOT, depotY + 60.0, depotX, 2);
 
         // all different angle, distance doesn't matter
-        PlanningLocation sw1 = location(50, depotY - 100, depotX - 100, 10_000);
-        PlanningLocation south1 = location(60, depotY - 100, depotX, 10_000);
-        PlanningLocation se1 = location(70, depotY - 100, depotX + 100, 10_000);
+        PlanningLocation sw1 = location(50, LocationType.DEPOT, depotY - 100, depotX - 100, 10_000);
+        PlanningLocation south1 = location(60, LocationType.DEPOT, depotY - 100, depotX, 10_000);
+        PlanningLocation se1 = location(70, LocationType.DEPOT, depotY - 100, depotX + 100, 10_000);
 
         // E < NE < N < NW < W < SW < S < SE < E (-π → π)
         assertThat(Stream.of(north1, north2, center1, center2, west, sw1, south1, se1, east1, east2)
@@ -114,11 +116,11 @@ class DepotAngleVisitDifficultyWeightFactoryTest {
     void locations_with_asymmetrical_distances_should_be_sorted_by_round_trip_time() {
         // coordinates only affect angle, distance is stored in the distance map
         // round-trip: 191 (a < b, although depot→a > depot→b)
-        PlanningLocation a = location(101, depotY, depotX, 101, 90);
+        PlanningLocation a = location(101, LocationType.DEPOT, depotY, depotX, 101, 90);
         // round-trip: 200
-        PlanningLocation b = location(102, depotY, depotX, 100, 100);
+        PlanningLocation b = location(102, LocationType.DEPOT, depotY, depotX, 100, 100);
         // round-trip: 250 (c > b, although c→depot < b→depot)
-        PlanningLocation c = location(103, depotY, depotX, 200, 50);
+        PlanningLocation c = location(103, LocationType.DEPOT, depotY, depotX, 200, 50);
 
         assertThat(weight(a)).isLessThan(weight(b));
         assertThat(weight(b)).isLessThan(weight(c));

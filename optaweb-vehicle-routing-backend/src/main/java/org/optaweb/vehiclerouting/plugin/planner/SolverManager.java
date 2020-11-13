@@ -93,6 +93,7 @@ class SolverManager implements SolverEventListener<VehicleRoutingSolution> {
     }
 
     void startSolver(VehicleRoutingSolution solution) {
+        logger.info("Starting Solver...");
         if (solverFuture != null) {
             throw new IllegalStateException("Solver start has already been requested");
         }
@@ -115,6 +116,7 @@ class SolverManager implements SolverEventListener<VehicleRoutingSolution> {
     }
 
     void stopSolver() {
+        logger.info("Sopping Solver...");
         if (solverFuture != null) {
             // TODO what happens if solver hasn't started yet (solve() is called asynchronously)
             solver.terminateEarly();
@@ -153,26 +155,31 @@ class SolverManager implements SolverEventListener<VehicleRoutingSolution> {
     }
 
     void addVisit(PlanningVisit visit) {
+        logger.debug("Adding new visit in the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new AddVisit(visit));
     }
 
     void removeVisit(PlanningVisit visit) {
+        logger.debug("Removing visit in the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new RemoveVisit(visit));
     }
 
     void addVehicle(PlanningVehicle vehicle) {
+        logger.debug("Adding new vehicle in the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new AddVehicle(vehicle));
     }
 
     void removeVehicle(PlanningVehicle vehicle) {
+        logger.debug("removing vehicle the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new RemoveVehicle(vehicle));
     }
 
     void changeCapacity(PlanningVehicle vehicle) {
+        logger.debug("Changing vehicle capacity in the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new ChangeVehicleCapacity(vehicle));
     }

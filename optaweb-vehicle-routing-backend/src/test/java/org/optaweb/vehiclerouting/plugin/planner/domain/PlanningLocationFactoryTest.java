@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 class PlanningLocationFactoryTest {
 
@@ -31,7 +32,7 @@ class PlanningLocationFactoryTest {
         double latitude = -20.5;
         double longitude = 11.7;
         long distance = 11234;
-        Location location = new Location(id, Coordinates.valueOf(latitude, longitude));
+        Location location = new Location(id, LocationType.VISIT, Coordinates.valueOf(latitude, longitude));
         PlanningLocation planningLocation = PlanningLocationFactory.fromDomain(location, otherLocation -> distance);
         assertThat(planningLocation.getId()).isEqualTo(id);
 

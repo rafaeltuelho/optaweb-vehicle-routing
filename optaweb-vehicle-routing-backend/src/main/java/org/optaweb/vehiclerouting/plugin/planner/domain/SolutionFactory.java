@@ -65,9 +65,9 @@ public class SolutionFactory {
         VehicleRoutingSolution solution = new VehicleRoutingSolution();
         solution.setVehicleList(new ArrayList<>(vehicles));
         solution.setDepotList(new ArrayList<>(1));
-        if (depot != null) {
+        if (depot != null) { //TODO: change to allow multiple Depots
             solution.getDepotList().add(depot);
-            moveAllVehiclesToDepot(vehicles, depot);
+            moveAllVehiclesToDepot(vehicles, depot); // TODO: not needed when vehicles could start from different locations
         }
         solution.setVisitList(new ArrayList<>(visits));
         solution.setScore(HardSoftLongScore.ZERO);

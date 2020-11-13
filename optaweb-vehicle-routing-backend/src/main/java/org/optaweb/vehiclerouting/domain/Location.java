@@ -22,15 +22,17 @@ package org.optaweb.vehiclerouting.domain;
 public class Location extends LocationData {
 
     private final long id;
+    private final LocationType type;
 
-    public Location(long id, Coordinates coordinates) {
+    public Location(long id, LocationType type, Coordinates coordinates) {
         // TODO remove this?
-        this(id, coordinates, "");
+        this(id, type, coordinates, "");
     }
 
-    public Location(long id, Coordinates coordinates, String description) {
-        super(coordinates, description);
+    public Location(long id, LocationType type, Coordinates coordinates, String description) {
+        super(type, coordinates, description);
         this.id = id;
+        this.type = type;
     }
 
     /**
@@ -52,24 +54,33 @@ public class Location extends LocationData {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Location other = (Location) obj;
+		if (id != other.id)
             return false;
-        }
-        Location location = (Location) o;
-        return id == location.id;
-    }
+            
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return description().isEmpty() ? Long.toString(id) : (id + ": '" + description() + "'");
-    }
+	@Override
+	public String toString() {
+        return "Location [id=" + id + 
+                (description().isEmpty() ? "" : ", description=" + description()) +
+                "]";
+    }  
+  
 }

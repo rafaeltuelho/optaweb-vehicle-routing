@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 @ExtendWith(MockitoExtension.class)
 class DistanceRepositoryImplTest {
@@ -43,8 +44,8 @@ class DistanceRepositoryImplTest {
     @Captor
     private ArgumentCaptor<DistanceEntity> distanceEntityArgumentCaptor;
 
-    private final Location from = new Location(1, Coordinates.valueOf(7, -4.0));
-    private final Location to = new Location(2, Coordinates.valueOf(5, 9.0));
+    private final Location from = new Location(1, LocationType.VISIT, Coordinates.valueOf(7, -4.0));
+    private final Location to = new Location(2, LocationType.VISIT, Coordinates.valueOf(5, 9.0));
 
     @Test
     void should_save_distance() {

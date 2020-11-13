@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.service.demo.dataset.DataSetMarshaller;
@@ -72,16 +73,17 @@ public class DemoService {
     public void loadDemo(String name) {
         RoutingProblem routingProblem = routingProblems.byName(name);
         // Add depot
-        routingProblem.depot().ifPresent(depot -> addWithRetry(depot.coordinates(), depot.description()));
+        //TODO: Depot will be a list
+        routingProblem.depot().ifPresent(depot -> addWithRetry(LocationType.DEPOT, depot.coordinates(), depot.description()));
 
         // TODO start randomizing only after using all available cities (=> reproducibility for small demos)
-        routingProblem.visits().forEach(visit -> addWithRetry(visit.coordinates(), visit.description()));
+        routingProblem.visits().forEach(visit -> addWithRetry(LocationType.VISIT, visit.coordinates(), visit.description()));
         routingProblem.vehicles().forEach(vehicleService::createVehicle);
     }
 
-    private void addWithRetry(Coordinates coordinates, String description) {
+    private void addWithRetry(LocationType type, Coordinates coordinates, String description) {
         int tries = 0;
-        while (tries < MAX_TRIES && !locationService.createLocation(coordinates, description)) {
+        while (tries < MAX_TRIES && !locationService.createLocation(type, coordinates, description)) {
             tries++;
         }
         if (tries == MAX_TRIES) {

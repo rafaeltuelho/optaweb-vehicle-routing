@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.service.error.ErrorEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -54,24 +55,27 @@ class LocationServiceTest {
     @InjectMocks
     private LocationService locationService;
 
+    private final LocationType type = LocationType.VISIT;
     private final Coordinates coordinates = Coordinates.valueOf(0.0, 1.0);
-    private final Location location = new Location(1, coordinates);
+    private final Location location = new Location(1, LocationType.VISIT, coordinates);
 
     @Test
     void createLocation_should_validate_arguments() {
-        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(null, "x"));
-        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(coordinates, null));
+        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(null, null, "x"));
+        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(null, null, null));
+        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(type, coordinates, null));
+        assertThatNullPointerException().isThrownBy(() -> locationService.createLocation(null, coordinates, null));
     }
 
     @Test
     void createLocation(@Mock DistanceMatrixRow matrixRow) {
         String description = "new location";
-        when(repository.createLocation(coordinates, description)).thenReturn(location);
+        when(repository.createLocation(type, coordinates, description)).thenReturn(location);
         when(distanceMatrix.addLocation(any())).thenReturn(matrixRow);
 
-        assertThat(locationService.createLocation(coordinates, description)).isTrue();
+        assertThat(locationService.createLocation(type, coordinates, description)).isTrue();
 
-        verify(repository).createLocation(coordinates, description);
+        verify(repository).createLocation(type, coordinates, description);
         verify(distanceMatrix).addLocation(location);
         verify(optimizer).addLocation(location, matrixRow);
     }
@@ -117,8 +121,8 @@ class LocationServiceTest {
 
     @Test
     void removing_depot_when_there_are_other_locations_should_publish_error() {
-        Location depot = new Location(1, coordinates);
-        Location visit = new Location(2, coordinates);
+        Location depot = new Location(1, LocationType.DEPOT, coordinates);
+        Location visit = new Location(2, LocationType.VISIT, coordinates);
         when(repository.locations()).thenReturn(Arrays.asList(depot, visit));
         when(repository.find(depot.id())).thenReturn(Optional.of(depot));
 
@@ -132,8 +136,8 @@ class LocationServiceTest {
 
     @Test
     void removing_visit_should_be_successful() {
-        Location depot = new Location(1, coordinates);
-        Location visit = new Location(2, coordinates);
+        Location depot = new Location(1, LocationType.DEPOT, coordinates);
+        Location visit = new Location(2, LocationType.VISIT, coordinates);
         when(repository.locations()).thenReturn(Arrays.asList(depot, visit));
         when(repository.find(visit.id())).thenReturn(Optional.of(visit));
 
@@ -155,10 +159,10 @@ class LocationServiceTest {
 
     @Test
     void should_not_optimize_and_roll_back_if_distance_calculation_fails() {
-        when(repository.createLocation(coordinates, "")).thenReturn(location);
+        when(repository.createLocation(type, coordinates, "")).thenReturn(location);
         doThrow(new RuntimeException("test exception")).when(distanceMatrix).addLocation(location);
 
-        assertThat(locationService.createLocation(coordinates, "")).isFalse();
+        assertThat(locationService.createLocation(type, coordinates, "")).isFalse();
         verifyNoInteractions(optimizer);
         // publish error event
         verify(eventPublisher).publishEvent(any(ErrorEvent.class));

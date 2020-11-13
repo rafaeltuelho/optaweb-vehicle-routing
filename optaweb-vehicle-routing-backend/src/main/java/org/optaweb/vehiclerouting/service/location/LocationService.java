@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.service.error.ErrorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +57,11 @@ public class LocationService {
         this.eventPublisher = eventPublisher;
     }
 
-    public synchronized boolean createLocation(Coordinates coordinates, String description) {
+    public synchronized boolean createLocation(LocationType type, Coordinates coordinates, String description) {
         Objects.requireNonNull(coordinates);
         Objects.requireNonNull(description);
         // TODO if (router.isLocationAvailable(coordinates))
-        return submitToPlanner(repository.createLocation(coordinates, description));
+        return submitToPlanner(repository.createLocation(type, coordinates, description));
     }
 
     public synchronized boolean addLocation(Location location) {

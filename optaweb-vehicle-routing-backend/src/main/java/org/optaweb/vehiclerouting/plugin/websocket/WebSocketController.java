@@ -117,6 +117,7 @@ class WebSocketController {
     @MessageMapping("/location")
     void addLocation(PortableLocation request) {
         locationService.createLocation(
+                request.getType(),
                 new Coordinates(request.getLatitude(), request.getLongitude()),
                 request.getDescription());
     }

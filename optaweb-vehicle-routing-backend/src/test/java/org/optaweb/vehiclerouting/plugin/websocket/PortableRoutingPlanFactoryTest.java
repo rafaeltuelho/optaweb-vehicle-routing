@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Route;
 import org.optaweb.vehiclerouting.domain.RouteWithTrack;
 import org.optaweb.vehiclerouting.domain.RoutingPlan;
@@ -58,9 +59,9 @@ class PortableRoutingPlanFactoryTest {
         List<Coordinates> segment13 = asList(coordinates1, checkpoint13, coordinates3);
         List<Coordinates> segment31 = asList(coordinates3, checkpoint31, coordinates1);
 
-        final Location location1 = new Location(1, coordinates1);
-        final Location location2 = new Location(2, coordinates2);
-        final Location location3 = new Location(3, coordinates3);
+        final Location location1 = new Location(1, LocationType.VISIT, coordinates1);
+        final Location location2 = new Location(2, LocationType.VISIT, coordinates2);
+        final Location location3 = new Location(3, LocationType.VISIT,  coordinates3);
         final Distance distance = Distance.ofMillis(5);
 
         final Vehicle vehicle1 = VehicleFactory.createVehicle(1, "Vehicle 1", 100);

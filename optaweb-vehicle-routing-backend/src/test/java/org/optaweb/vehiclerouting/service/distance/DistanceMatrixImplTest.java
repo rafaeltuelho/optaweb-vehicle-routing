@@ -36,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,7 +166,7 @@ class DistanceMatrixImplTest {
     }
 
     private static Location location(long id, int longitude) {
-        return new Location(id, new Coordinates(BigDecimal.ZERO, BigDecimal.valueOf(longitude)));
+        return new Location(id, LocationType.VISIT, new Coordinates(BigDecimal.ZERO, BigDecimal.valueOf(longitude)));
     }
 
     private static class MockDistanceCalculator implements DistanceCalculator {

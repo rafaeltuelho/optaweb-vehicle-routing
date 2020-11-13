@@ -25,6 +25,7 @@ import java.util.Objects;
  */
 public class LocationData {
 
+    private final LocationType type;
     private final Coordinates coordinates;
     private final String description;
 
@@ -34,9 +35,19 @@ public class LocationData {
      * @param coordinates never {@code null}
      * @param description never {@code null}
      */
-    public LocationData(Coordinates coordinates, String description) {
-        this.coordinates = Objects.requireNonNull(coordinates);
+    public LocationData(LocationType type, Coordinates coordinates, String description) {
+        this.type = Objects.requireNonNullElse(type, LocationType.VISIT);
+		this.coordinates = Objects.requireNonNull(coordinates);
         this.description = Objects.requireNonNull(description);
+    }
+
+    /**
+     * Location's Type.
+     *
+     * @return location type
+     */
+    public LocationType type() {
+        return type;
     }
 
     /**
@@ -66,17 +77,20 @@ public class LocationData {
             return false;
         }
         LocationData that = (LocationData) o;
-        return coordinates.equals(that.coordinates) &&
+        return type.equals(that.type) &&
+                coordinates.equals(that.coordinates) &&
                 description.equals(that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coordinates, description);
+        return Objects.hash(type, coordinates, description);
     }
 
     @Override
     public String toString() {
-        return (description.isEmpty() ? "<noname>" : "'" + description + "'") + " " + coordinates;
+        return (description.isEmpty() ? "<noname>" : "'" + description + "'") + 
+                ", type=" + type + 
+                ", coordinates="+ coordinates;
     }
 }

@@ -38,6 +38,7 @@ class PortableRoutingPlanFactory {
     static PortableRoutingPlan fromRoutingPlan(RoutingPlan routingPlan) {
         PortableDistance distance = PortableDistance.fromDistance(routingPlan.distance());
         List<PortableVehicle> vehicles = portableVehicles(routingPlan.vehicles());
+        //TODO: change to support list of depots
         PortableLocation depot = routingPlan.depot().map(PortableLocation::fromLocation).orElse(null);
         List<PortableLocation> visits = portableVisits(routingPlan.visits());
         List<PortableRoute> routes = routingPlan.routes().stream()

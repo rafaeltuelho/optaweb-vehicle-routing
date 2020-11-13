@@ -63,7 +63,9 @@ const LocationMarker: React.FC<Props> = ({
         key={isSelected ? 'selected' : ''}
         permanent={isSelected}
       >
-        {`Location ${location.id} [Lat=${location.lat}, Lng=${location.lng}]`}
+        {`Location: ${location.description} (${location.id})`}
+        <br />
+        {`[Lat=${location.lat}, Lng=${location.lng}]`}
       </Tooltip>
     </Marker>
   );

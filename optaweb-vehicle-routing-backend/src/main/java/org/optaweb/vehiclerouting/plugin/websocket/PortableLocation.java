@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 class PortableLocation {
 
     private final long id;
+    private final LocationType type;
 
     @JsonProperty(value = "lat", required = true)
     private final BigDecimal latitude;
@@ -42,6 +44,7 @@ class PortableLocation {
         Objects.requireNonNull(location, "location must not be null");
         return new PortableLocation(
                 location.id(),
+                location.type(),
                 location.coordinates().latitude(),
                 location.coordinates().longitude(),
                 location.description());
@@ -50,10 +53,12 @@ class PortableLocation {
     @JsonCreator
     PortableLocation(
             @JsonProperty(value = "id") long id,
+            @JsonProperty(value = "type") LocationType type,
             @JsonProperty(value = "lat") BigDecimal latitude,
             @JsonProperty(value = "lng") BigDecimal longitude,
             @JsonProperty(value = "description") String description) {
         this.id = id;
+        this.type = type;
         this.latitude = Objects.requireNonNull(latitude);
         this.longitude = Objects.requireNonNull(longitude);
         this.description = Objects.requireNonNull(description);
@@ -61,6 +66,10 @@ class PortableLocation {
 
     public long getId() {
         return id;
+    }
+
+    public LocationType getType() {
+        return type;
     }
 
     public BigDecimal getLatitude() {
@@ -85,6 +94,7 @@ class PortableLocation {
         }
         PortableLocation that = (PortableLocation) o;
         return id == that.id &&
+                type.equals(that.type) &&
                 description.equals(that.description) &&
                 latitude.compareTo(that.latitude) == 0 &&
                 longitude.compareTo(that.longitude) == 0;
@@ -92,13 +102,14 @@ class PortableLocation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, latitude, longitude);
+        return Objects.hash(id, type, description, latitude, longitude);
     }
 
     @Override
     public String toString() {
         return "PortableLocation{" +
                 "id=" + id +
+                ", type=" + type +
                 ", description='" + description + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +

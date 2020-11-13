@@ -22,14 +22,15 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 class LocationEntityTest {
 
     @Test
     void constructor_params_must_not_be_null() {
-        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, null, BigDecimal.ZERO, ""));
-        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, BigDecimal.ZERO, null, ""));
-        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, BigDecimal.ZERO, BigDecimal.ONE, null));
+        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, null, null, BigDecimal.ZERO, ""));
+        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, null, BigDecimal.ZERO, null, ""));
+        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, LocationType.VISIT, BigDecimal.ZERO, BigDecimal.ONE, null));
     }
 
     @Test
@@ -38,7 +39,7 @@ class LocationEntityTest {
         BigDecimal latitude = BigDecimal.valueOf(0.101);
         BigDecimal longitude = BigDecimal.valueOf(101.0);
         String description = "Description.";
-        LocationEntity locationEntity = new LocationEntity(id, latitude, longitude, description);
+        LocationEntity locationEntity = new LocationEntity(id, LocationType.VISIT, latitude, longitude, description);
         assertThat(locationEntity.getId()).isEqualTo(id);
         assertThat(locationEntity.getLongitude()).isEqualTo(longitude);
         assertThat(locationEntity.getLatitude()).isEqualTo(latitude);

@@ -25,6 +25,8 @@ export interface LatLngWithDescription extends LatLng {
   description: string;
 }
 
+// TODO: define a new type for Depot
+
 export interface Location extends LatLng {
   readonly id: number;
   // TODO decide between optional, nullable and more complex structure (displayName, fullDescription, address, ...)

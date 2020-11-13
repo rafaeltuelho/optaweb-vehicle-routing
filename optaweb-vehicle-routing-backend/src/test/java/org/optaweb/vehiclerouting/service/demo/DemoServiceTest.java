@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
@@ -73,8 +74,8 @@ class DemoServiceTest {
     private final List<VehicleData> vehicles = Arrays.asList(
             VehicleFactory.vehicleData("v1", 10),
             VehicleFactory.vehicleData("v2", 10));
-    private final Location depot = new Location(1, Coordinates.valueOf(1.0, 7), "Depot");
-    private final List<Location> visits = Arrays.asList(new Location(2, Coordinates.valueOf(2.0, 9), "Visit"));
+    private final Location depot = new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 7), "Depot");
+    private final List<Location> visits = Arrays.asList(new Location(2, LocationType.VISIT, Coordinates.valueOf(2.0, 9), "Visit"));
     private final RoutingProblem routingProblem = new RoutingProblem(problemName, vehicles, depot, visits);
 
     @Test
@@ -91,12 +92,12 @@ class DemoServiceTest {
     void loadDemo() {
         // arrange
         when(routingProblems.byName(problemName)).thenReturn(routingProblem);
-        when(locationService.createLocation(any(Coordinates.class), anyString())).thenReturn(true);
+        when(locationService.createLocation(any(LocationType.class), any(Coordinates.class), anyString())).thenReturn(true);
         // act
         demoService.loadDemo(problemName);
         // assert
         verify(locationService, times(routingProblem.visits().size() + 1))
-                .createLocation(any(Coordinates.class), anyString());
+                .createLocation(any(LocationType.class), any(Coordinates.class), anyString());
         verify(vehicleService, times(routingProblem.vehicles().size()))
                 .createVehicle(any(VehicleData.class));
     }
@@ -104,18 +105,18 @@ class DemoServiceTest {
     @Test
     void retry_when_adding_location_fails() {
         when(routingProblems.byName(problemName)).thenReturn(routingProblem);
-        when(locationService.createLocation(any(Coordinates.class), anyString())).thenReturn(false);
+        when(locationService.createLocation(any(LocationType.class), any(Coordinates.class), anyString())).thenReturn(false);
         assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> demoService.loadDemo(problemName))
                 .withMessageContaining(depot.coordinates().toString());
-        verify(locationService, times(DemoService.MAX_TRIES)).createLocation(any(Coordinates.class), anyString());
+        verify(locationService, times(DemoService.MAX_TRIES)).createLocation(any(LocationType.class),any(Coordinates.class), anyString());
     }
 
     @Test
     void export_should_marshal_routing_plans_with_locations_and_vehicles_from_repository() {
-        Location depot = new Location(0, Coordinates.valueOf(1.0, 2.0), "Depot");
-        Location visit1 = new Location(1, Coordinates.valueOf(11.0, 22.0), "Visit 1");
-        Location visit2 = new Location(2, Coordinates.valueOf(22.0, 33.0), "Visit 2");
+        Location depot = new Location(0, LocationType.DEPOT, Coordinates.valueOf(1.0, 2.0), "Depot");
+        Location visit1 = new Location(1, LocationType.VISIT, Coordinates.valueOf(11.0, 22.0), "Visit 1");
+        Location visit2 = new Location(2, LocationType.VISIT, Coordinates.valueOf(22.0, 33.0), "Visit 2");
         Vehicle vehicle1 = VehicleFactory.createVehicle(11, "Vehicle 1", 100);
         Vehicle vehicle2 = VehicleFactory.createVehicle(12, "Vehicle 2", 200);
         when(locationRepository.locations()).thenReturn(Arrays.asList(depot, visit1, visit2));
