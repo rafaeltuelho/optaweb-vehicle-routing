@@ -122,20 +122,20 @@ class DistanceMatrixImpl implements DistanceMatrix {
         return matrix.size();
     }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String utf8 = StandardCharsets.UTF_8.name();
         String str = "";
         PrintStream ps;
-		try {
-			ps = new PrintStream(baos, true, utf8);
+        try {
+            ps = new PrintStream(baos, true, utf8);
             MapUtils.debugPrint(ps, "DistanceMatrix", this.matrix);
             str = baos.toString(utf8);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         return "DistanceMatrix: \n" + str;
-	}    
+    }
 }

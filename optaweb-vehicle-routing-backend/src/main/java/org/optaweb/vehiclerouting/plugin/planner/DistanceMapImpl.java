@@ -42,5 +42,5 @@ public class DistanceMapImpl implements DistanceMap {
         //logger.debug("distanceTo ({}) is '{}' millis", location, distanceMatrixRow.distanceTo(location.getId()).millis());
         return distanceMatrixRow.distanceTo(location.getId()).millis();
     }
-    
+
 }

@@ -75,7 +75,8 @@ class DemoServiceTest {
             VehicleFactory.vehicleData("v1", 10),
             VehicleFactory.vehicleData("v2", 10));
     private final Location depot = new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 7), "Depot");
-    private final List<Location> visits = Arrays.asList(new Location(2, LocationType.VISIT, Coordinates.valueOf(2.0, 9), "Visit"));
+    private final List<Location> visits =
+            Arrays.asList(new Location(2, LocationType.VISIT, Coordinates.valueOf(2.0, 9), "Visit"));
     private final RoutingProblem routingProblem = new RoutingProblem(problemName, vehicles, depot, visits);
 
     @Test
@@ -109,7 +110,8 @@ class DemoServiceTest {
         assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> demoService.loadDemo(problemName))
                 .withMessageContaining(depot.coordinates().toString());
-        verify(locationService, times(DemoService.MAX_TRIES)).createLocation(any(LocationType.class),any(Coordinates.class), anyString());
+        verify(locationService, times(DemoService.MAX_TRIES)).createLocation(any(LocationType.class), any(Coordinates.class),
+                anyString());
     }
 
     @Test

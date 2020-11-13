@@ -16,9 +16,9 @@
 
 package org.optaweb.vehiclerouting.service.demo.dataset;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.optaweb.vehiclerouting.domain.LocationType;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Data set location.

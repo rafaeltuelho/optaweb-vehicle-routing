@@ -92,7 +92,7 @@ class RoutingPlanTest {
         Vehicle vehicle1 = VehicleFactory.testVehicle(1);
         Vehicle vehicle2 = VehicleFactory.testVehicle(2);
 
-        Location depot =  new Location(100, LocationType.DEPOT, Coordinates.valueOf(0, 0), "depot");
+        Location depot = new Location(100, LocationType.DEPOT, Coordinates.valueOf(0, 0), "depot");
         Location visit1 = new Location(101, LocationType.VISIT, Coordinates.valueOf(1, 1), "visit1");
         Location visit2 = new Location(102, LocationType.VISIT, Coordinates.valueOf(2, 2), "visit2");
         Location visit3 = new Location(103, LocationType.VISIT, Coordinates.valueOf(3, 3), "visit3");

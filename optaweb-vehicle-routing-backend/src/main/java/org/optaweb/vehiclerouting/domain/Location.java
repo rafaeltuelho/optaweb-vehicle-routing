@@ -54,33 +54,33 @@ public class Location extends LocationData {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Location other = (Location) obj;
-		if (id != other.id)
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
             return false;
-            
-		return true;
-	}
+        if (getClass() != obj.getClass())
+            return false;
+        Location other = (Location) obj;
+        if (id != other.id)
+            return false;
 
-	@Override
-	public String toString() {
-        return "Location [id=" + id + 
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Location [id=" + id +
                 (description().isEmpty() ? "" : ", description=" + description()) +
                 "]";
-    }  
-  
+    }
+
 }

@@ -17,7 +17,7 @@
 package org.optaweb.vehiclerouting.domain;
 
 /**
- * Location type. 
+ * Location type.
  */
 public enum LocationType {
     VISIT,

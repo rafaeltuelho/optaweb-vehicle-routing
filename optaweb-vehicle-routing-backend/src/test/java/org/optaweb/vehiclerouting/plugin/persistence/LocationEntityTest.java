@@ -30,7 +30,8 @@ class LocationEntityTest {
     void constructor_params_must_not_be_null() {
         assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, null, null, BigDecimal.ZERO, ""));
         assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, null, BigDecimal.ZERO, null, ""));
-        assertThatNullPointerException().isThrownBy(() -> new LocationEntity(0, LocationType.VISIT, BigDecimal.ZERO, BigDecimal.ONE, null));
+        assertThatNullPointerException()
+                .isThrownBy(() -> new LocationEntity(0, LocationType.VISIT, BigDecimal.ZERO, BigDecimal.ONE, null));
     }
 
     @Test

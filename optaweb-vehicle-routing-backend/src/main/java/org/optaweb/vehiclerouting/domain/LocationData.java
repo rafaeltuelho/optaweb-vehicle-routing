@@ -37,7 +37,7 @@ public class LocationData {
      */
     public LocationData(LocationType type, Coordinates coordinates, String description) {
         this.type = Objects.requireNonNullElse(type, LocationType.VISIT);
-		this.coordinates = Objects.requireNonNull(coordinates);
+        this.coordinates = Objects.requireNonNull(coordinates);
         this.description = Objects.requireNonNull(description);
     }
 
@@ -89,8 +89,8 @@ public class LocationData {
 
     @Override
     public String toString() {
-        return (description.isEmpty() ? "<noname>" : "'" + description + "'") + 
-                ", type=" + type + 
-                ", coordinates="+ coordinates;
+        return (description.isEmpty() ? "<noname>" : "'" + description + "'") +
+                ", type=" + type +
+                ", coordinates=" + coordinates;
     }
 }

@@ -91,5 +91,5 @@ class LocationEntity {
                 ", description='" + description + '\'' +
                 '}';
     }
-    
+
 }

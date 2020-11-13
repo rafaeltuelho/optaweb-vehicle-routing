@@ -61,7 +61,7 @@ class PortableRoutingPlanFactoryTest {
 
         final Location location1 = new Location(1, LocationType.VISIT, coordinates1);
         final Location location2 = new Location(2, LocationType.VISIT, coordinates2);
-        final Location location3 = new Location(3, LocationType.VISIT,  coordinates3);
+        final Location location3 = new Location(3, LocationType.VISIT, coordinates3);
         final Distance distance = Distance.ofMillis(5);
 
         final Vehicle vehicle1 = VehicleFactory.createVehicle(1, "Vehicle 1", 100);

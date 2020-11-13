@@ -139,7 +139,8 @@ class WebSocketControllerTest {
     void addLocation() {
         Coordinates coords = Coordinates.valueOf(0.0, 1.0);
         String description = "new location";
-        PortableLocation request = new PortableLocation(321, LocationType.VISIT, coords.latitude(), coords.longitude(), description);
+        PortableLocation request =
+                new PortableLocation(321, LocationType.VISIT, coords.latitude(), coords.longitude(), description);
         webSocketController.addLocation(request);
         verify(locationService).createLocation(LocationType.VISIT, coords, description);
     }
