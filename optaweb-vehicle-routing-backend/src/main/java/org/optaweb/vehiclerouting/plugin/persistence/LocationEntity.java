@@ -46,6 +46,7 @@ class LocationEntity {
     private BigDecimal longitude;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(255)")
     private LocationType type;
     private String description;
 

@@ -15,7 +15,7 @@
  */
 
 import * as SockJS from 'sockjs-client';
-import { LatLngWithDescription } from 'store/route/types';
+import { LatLngWithTypeDescription, LocationType } from 'store/route/types';
 import { Client, Options, over } from 'webstomp-client';
 import WebSocketClient from './WebSocketClient';
 
@@ -67,7 +67,8 @@ describe('WebSocketClient', () => {
   });
 
   it('addLocation() should send location', () => {
-    const location: LatLngWithDescription = {
+    const location: LatLngWithTypeDescription = {
+      type: LocationType.Visit,
       lat: 1,
       lng: 2,
       description: 'test',

@@ -18,7 +18,7 @@ import * as L from 'leaflet';
 import * as React from 'react';
 import { Map, Polyline, Rectangle, TileLayer, ZoomControl } from 'react-leaflet';
 import { UserViewport } from 'store/client/types';
-import { LatLng, Location, RouteWithTrack } from 'store/route/types';
+import { LatLng, Location, LocationType, RouteWithTrack } from 'store/route/types';
 import LocationMarker from './LocationMarker';
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -78,7 +78,8 @@ const RouteMap: React.FC<Props> = ({
       {depot && (
         <LocationMarker
           location={depot}
-          isDepot
+          // isDepot
+          isDepot={depot.type === LocationType.Depot}
           isSelected={depot.id === selectedId}
           removeHandler={removeHandler}
         />
@@ -87,7 +88,8 @@ const RouteMap: React.FC<Props> = ({
         <LocationMarker
           key={location.id}
           location={location}
-          isDepot={false}
+          // isDepot={false}
+          isDepot={location.type === LocationType.Depot}
           isSelected={location.id === selectedId}
           removeHandler={removeHandler}
         />

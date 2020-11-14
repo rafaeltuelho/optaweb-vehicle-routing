@@ -22,13 +22,13 @@ import {
   ClearRouteAction,
   DeleteLocationAction,
   DeleteVehicleAction,
-  LatLngWithDescription,
+  LatLngWithTypeDescription,
   VehicleCapacity,
 } from './types';
 
 export const { updateRoute } = actions;
 
-export const addLocation: ThunkCommandFactory<LatLngWithDescription, AddLocationAction> = (
+export const addLocation: ThunkCommandFactory<LatLngWithTypeDescription, AddLocationAction> = (
   (location) => (dispatch, getState, client) => {
     dispatch(actions.addLocation(location));
     client.addLocation(location);

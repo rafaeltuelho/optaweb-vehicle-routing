@@ -22,7 +22,7 @@ import {
   ClearRouteAction,
   DeleteLocationAction,
   DeleteVehicleAction,
-  LatLngWithDescription,
+  LatLngWithTypeDescription,
   RoutingPlan,
   UpdateRouteAction,
 } from './types';
@@ -36,7 +36,7 @@ export const deleteVehicle: ActionFactory<number, DeleteVehicleAction> = (id) =>
   value: id,
 });
 
-export const addLocation: ActionFactory<LatLngWithDescription, AddLocationAction> = (location) => ({
+export const addLocation: ActionFactory<LatLngWithTypeDescription, AddLocationAction> = (location) => ({
   type: ActionType.ADD_LOCATION,
   value: location,
 });

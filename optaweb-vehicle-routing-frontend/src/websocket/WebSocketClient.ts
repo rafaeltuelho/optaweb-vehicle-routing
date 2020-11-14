@@ -16,7 +16,7 @@
 
 import SockJS from 'sockjs-client';
 import { MessagePayload } from 'store/message/types';
-import { LatLngWithDescription, RoutingPlan } from 'store/route/types';
+import { LatLngWithTypeDescription, RoutingPlan } from 'store/route/types';
 import { ServerInfo } from 'store/server/types';
 import { Client, Frame, over } from 'webstomp-client';
 
@@ -49,7 +49,7 @@ export default class WebSocketClient {
     );
   }
 
-  addLocation(latLng: LatLngWithDescription) {
+  addLocation(latLng: LatLngWithTypeDescription) {
     if (this.stompClient) {
       this.stompClient.send('/app/location', JSON.stringify(latLng));
     }

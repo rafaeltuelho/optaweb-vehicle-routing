@@ -20,7 +20,7 @@ import { WebSocketConnectionStatus } from '../websocket/types';
 import * as actions from './actions';
 import reducer, { routeOperations } from './index';
 import { initialRouteState } from './reducers';
-import { LatLngWithDescription, Vehicle, VehicleCapacity } from './types';
+import { LocationType, LatLngWithTypeDescription, Vehicle, VehicleCapacity } from './types';
 
 describe('Route operations', () => {
   it('clearRoute() should call client', () => {
@@ -65,7 +65,7 @@ describe('Route operations', () => {
 
   it('addLocation() should call client', () => {
     const { store, client } = mockStore(state);
-    const location: LatLngWithDescription = { lat: 11.01, lng: -35.79, description: 'new location' };
+    const location: LatLngWithTypeDescription = { type: LocationType.Visit, lat: 11.01, lng: -35.79, description: 'new location' };
 
     store.dispatch(routeOperations.addLocation(location));
 
@@ -105,6 +105,7 @@ describe('Route reducers', () => {
   it('add location', () => {
     expect(
       reducer(state.plan, actions.addLocation({
+        type: LocationType.Visit,
         lat: 1,
         lng: -1,
         description: 'description',
@@ -139,28 +140,45 @@ describe('Route reducers', () => {
 
 const vehicle1: Vehicle = { id: 1, name: 'v1', capacity: 5 };
 const vehicle2: Vehicle = { id: 2, name: 'v2', capacity: 5 };
+const depot1 = {
+  id: 1,
+  type: LocationType.Depot,
+  lat: 1.345678,
+  lng: 1.345678,
+};
+const depot2 = {
+  id: 1,
+  type: LocationType.Depot,
+  lat: 1.345678,
+  lng: 1.345678,
+};
 const visit1 = {
   id: 1,
+  type: LocationType.Visit,
   lat: 1.345678,
   lng: 1.345678,
 };
 const visit2 = {
   id: 2,
+  type: LocationType.Visit,
   lat: 2.345678,
   lng: 2.345678,
 };
 const visit3 = {
   id: 3,
+  type: LocationType.Visit,
   lat: 3.676111,
   lng: 3.568333,
 };
 const visit4 = {
   id: 4,
+  type: LocationType.Visit,
   lat: 4.345678,
   lng: 4.345678,
 };
 const visit5 = {
   id: 5,
+  type: LocationType.Visit,
   lat: 5.345678,
   lng: 5.345678,
 };

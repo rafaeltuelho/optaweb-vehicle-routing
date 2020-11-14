@@ -21,7 +21,14 @@ export interface LatLng {
   readonly lng: number;
 }
 
-export interface LatLngWithDescription extends LatLng {
+export enum LocationType {
+  Visit = 'VISIT',
+  Depot = 'DEPOT',
+  Other = 'OTHER',
+}
+
+export interface LatLngWithTypeDescription extends LatLng {
+  type: LocationType;
   description: string;
 }
 
@@ -29,6 +36,7 @@ export interface LatLngWithDescription extends LatLng {
 
 export interface Location extends LatLng {
   readonly id: number;
+  readonly type: string;
   // TODO decide between optional, nullable and more complex structure (displayName, fullDescription, address, ...)
   readonly description?: string;
 }
@@ -54,6 +62,7 @@ export interface RoutingPlan {
   readonly distance: string;
   readonly vehicles: Vehicle[];
   readonly depot: Location | null;
+  // readonly depot: Location[];
   readonly visits: Location[];
   readonly routes: RouteWithTrack[];
 }
@@ -68,7 +77,7 @@ export enum ActionType {
 }
 
 export interface AddLocationAction extends Action<ActionType.ADD_LOCATION> {
-  readonly value: LatLngWithDescription;
+  readonly value: LatLngWithTypeDescription;
 }
 
 export interface AddVehicleAction extends Action<ActionType.ADD_VEHICLE> {

@@ -17,9 +17,11 @@
 import '@patternfly/patternfly/patternfly.css';
 import { Button, Text, TextContent, TextInput, TextVariants } from '@patternfly/react-core';
 import { PlusSquareIcon, EnterpriseIcon } from '@patternfly/react-icons';
+import { latLng } from 'leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { type } from 'os';
 import * as React from 'react';
-import { LatLng } from 'store/route/types';
+import { LatLngWithTypeDescription, LatLng, LocationType } from 'store/route/types';
 
 export interface Props {
   searchDelay: number;
@@ -36,7 +38,7 @@ export interface State {
 
 export interface Result {
   address: string;
-  latLng: LatLng;
+  latLng: LatLngWithTypeDescription;
 }
 
 const searchParams = (props: Props) => ({
@@ -74,7 +76,6 @@ class SearchBox extends React.Component<Props, State> {
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleDepotClick = this.handleDepotClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -102,7 +103,7 @@ class SearchBox extends React.Component<Props, State> {
             results: searchResults
               .map((result) => ({
                 address: result.label,
-                latLng: { lat: result.y, lng: result.x },
+                latLng: { type: LocationType.Other, lat: result.y, lng: result.x, description: result.label},
               })),
             attributions: searchResults
               .map((result) => result.raw.licence)
@@ -118,18 +119,14 @@ class SearchBox extends React.Component<Props, State> {
     }
   }
 
-  handleClick(index: number) {
-    this.props.addHandler(this.state.results[index]);
-    this.setState({
-      query: '',
-      results: [],
-      attributions: [],
-    });
-    // TODO focus text input
-  }
+  handleClick(index: number, type: LocationType) {
+    // console.debug('Original result in state: ', this.state.results[index]);
+    // let result = {...this.state.results[index]};
+    let resultCopy = Object.assign({}, this.state.results[index]);
+    resultCopy.latLng.type = type;
+    // console.debug('SearchBox result after change: ', resultCopy);
+    this.props.addHandler(resultCopy);
 
-  handleDepotClick(index: number) {
-    this.props.addHandler(this.state.results[index]);
     this.setState({
       query: '',
       results: [],
@@ -162,7 +159,7 @@ class SearchBox extends React.Component<Props, State> {
                       className="pf-c-options-menu__menu-item-icon"
                       variant="link"
                       type="button"
-                      onClick={() => this.handleClick(index)}
+                      onClick={() => this.handleClick(index, LocationType.Visit)}
                       data-cy={`geosearch-location-item-button-${index}`}
                     >
                       <PlusSquareIcon />
@@ -171,7 +168,7 @@ class SearchBox extends React.Component<Props, State> {
                       className="pf-c-options-menu__menu-item-icon"
                       variant="link"
                       type="button"
-                      onClick={() => this.handleDepotClick(index)}
+                      onClick={() => this.handleClick(index, LocationType.Depot)}
                       data-cy={`geosearch-location-item-button-${index}`}
                     >
                       <EnterpriseIcon />
