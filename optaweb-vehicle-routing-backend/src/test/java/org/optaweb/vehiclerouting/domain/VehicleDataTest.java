@@ -25,7 +25,8 @@ class VehicleDataTest {
 
     @Test
     void constructor_params_must_not_be_null() {
-        assertThatNullPointerException().isThrownBy(() -> new VehicleData(null, 1));
+        assertThatNullPointerException().isThrownBy(() -> new VehicleData("Test", 1, null));
+        assertThatNullPointerException().isThrownBy(() -> new VehicleData(null, 1, LocationFactory.testLocation(1, LocationType.VEHICLE)));
     }
 
     @Test
@@ -33,20 +34,21 @@ class VehicleDataTest {
         String name = "vehicle name";
         int capacity = 20;
 
-        VehicleData vehicleData = new VehicleData(name, capacity);
+        Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        VehicleData vehicleData = new VehicleData(name, capacity, vehicleLocation);
 
         assertThat(vehicleData)
                 // different name
-                .isNotEqualTo(new VehicleData("", capacity))
+                .isNotEqualTo(new VehicleData("", capacity, vehicleLocation))
                 // different capacity
-                .isNotEqualTo(new VehicleData(name, capacity + 1))
+                .isNotEqualTo(new VehicleData(name, capacity + 1, vehicleLocation))
                 // null
                 .isNotEqualTo(null)
                 // different type with equal properties
-                .isNotEqualTo(new Vehicle(0, name, capacity))
+                .isNotEqualTo(new Vehicle(0, name, capacity, vehicleLocation))
                 // same object -> OK
                 .isEqualTo(vehicleData)
                 // same properties -> OK
-                .isEqualTo(new VehicleData(name, capacity));
+                .isEqualTo(new VehicleData(name, capacity, vehicleLocation));
     }
 }

@@ -85,7 +85,7 @@ class RouteChangedEventPublisher {
                 // Turn negative soft score into a positive amount of time.
                 Distance.ofMillis(-solution.getScore().getSoftScore()),
                 vehicleIds(solution),
-                depotId(solution),
+                depotIds(solution),
                 visitIds(solution),
                 routes);
     }
@@ -93,6 +93,12 @@ class RouteChangedEventPublisher {
     private static List<Long> visitIds(VehicleRoutingSolution solution) {
         return solution.getVisitList().stream()
                 .map(visit -> visit.getLocation().getId())
+                .collect(toList());
+    }
+
+    private static List<Long> depotIds(VehicleRoutingSolution solution) {
+        return solution.getDepotList().stream()
+                .map(depot -> depot.getLocation().getId())
                 .collect(toList());
     }
 
@@ -144,7 +150,7 @@ class RouteChangedEventPublisher {
      * @param solution the solution in which to look for the depot
      * @return first depot ID from the solution or {@code null} if there are no depots
      */
-    private static Long depotId(VehicleRoutingSolution solution) {
-        return solution.getDepotList().isEmpty() ? null : solution.getDepotList().get(0).getId();
-    }
+    // private static Long depotId(VehicleRoutingSolution solution) {
+    //     return solution.getDepotList().isEmpty() ? null : solution.getDepotList().get(0).getId();
+    // }
 }

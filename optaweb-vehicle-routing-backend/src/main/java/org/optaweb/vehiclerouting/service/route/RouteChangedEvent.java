@@ -19,7 +19,6 @@ package org.optaweb.vehiclerouting.service.route;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.springframework.context.ApplicationEvent;
@@ -30,9 +29,11 @@ import org.springframework.context.ApplicationEvent;
  */
 public class RouteChangedEvent extends ApplicationEvent {
 
+	private static final long serialVersionUID = 1L;
+
     private final Distance distance;
     private final List<Long> vehicleIds;
-    private final Long depotId;
+    private final List<Long> depotIds;
     private final List<Long> visitIds;
     private final Collection<ShallowRoute> routes;
 
@@ -42,7 +43,7 @@ public class RouteChangedEvent extends ApplicationEvent {
      * @param source the object on which the event initially occurred (never {@code null})
      * @param distance total distance of all vehicle routes
      * @param vehicleIds vehicle IDs
-     * @param depotId depot ID (may be {@code null} if there are no locations)
+     * @param depotIds depot IDs
      * @param visitIds IDs of visits
      * @param routes vehicle routes
      */
@@ -50,13 +51,13 @@ public class RouteChangedEvent extends ApplicationEvent {
             Object source,
             Distance distance,
             List<Long> vehicleIds,
-            Long depotId,
+            List<Long> depotIds,
             List<Long> visitIds,
             Collection<ShallowRoute> routes) {
         super(source);
         this.distance = Objects.requireNonNull(distance);
         this.vehicleIds = Objects.requireNonNull(vehicleIds);
-        this.depotId = depotId; // may be null (no depot)
+        this.depotIds = Objects.requireNonNull(depotIds);
         this.visitIds = Objects.requireNonNull(visitIds);
         this.routes = Objects.requireNonNull(routes);
     }
@@ -93,8 +94,8 @@ public class RouteChangedEvent extends ApplicationEvent {
      *
      * @return depot ID
      */
-    public Optional<Long> depotId() {
-        return Optional.ofNullable(depotId);
+    public List<Long> depotIds() {
+        return depotIds;
     }
 
     public List<Long> visitIds() {

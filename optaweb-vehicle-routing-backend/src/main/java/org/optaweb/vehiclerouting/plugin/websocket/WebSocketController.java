@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.RoutingPlan;
+import org.optaweb.vehiclerouting.domain.VehicleData;
+import org.optaweb.vehiclerouting.domain.VehicleFactory;
 import org.optaweb.vehiclerouting.service.demo.DemoService;
 import org.optaweb.vehiclerouting.service.error.ErrorEvent;
 import org.optaweb.vehiclerouting.service.location.LocationService;
@@ -129,6 +131,7 @@ class WebSocketController {
      */
     @MessageMapping("/location/{id}/delete")
     void removeLocation(@DestinationVariable long id) {
+        //TODO: should the vehicles associated with this Location be also be removed in cascade mode.
         locationService.removeLocation(id);
     }
 
@@ -149,9 +152,12 @@ class WebSocketController {
         vehicleService.removeAll();
     }
 
+    // FIX ME: Should I make the vehicle creation a two step operation (create location and them vehicle)???
     @MessageMapping("vehicle")
-    void addVehicle() {
-        vehicleService.createVehicle();
+    void addVehicle(PortableVehicle request) {
+        VehicleData vehicleData = VehicleFactory.vehicleData(
+            request.getName(), request.getCapacity(), PortableLocation.toDomainLocation(request.getLocation()));
+        vehicleService.createVehicleWithLocation(vehicleData);
     }
 
     /**

@@ -25,8 +25,10 @@ import org.optaplanner.core.api.solver.event.SolverEventListener;
 import org.optaweb.vehiclerouting.plugin.planner.change.AddVehicle;
 import org.optaweb.vehiclerouting.plugin.planner.change.AddVisit;
 import org.optaweb.vehiclerouting.plugin.planner.change.ChangeVehicleCapacity;
+import org.optaweb.vehiclerouting.plugin.planner.change.RemoveDepot;
 import org.optaweb.vehiclerouting.plugin.planner.change.RemoveVehicle;
 import org.optaweb.vehiclerouting.plugin.planner.change.RemoveVisit;
+import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningDepot;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVehicle;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVisit;
 import org.optaweb.vehiclerouting.plugin.planner.domain.VehicleRoutingSolution;
@@ -161,19 +163,25 @@ class SolverManager implements SolverEventListener<VehicleRoutingSolution> {
     }
 
     void removeVisit(PlanningVisit visit) {
-        logger.debug("Removing visit in the Solver");
+        logger.debug("Removing visit from the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new RemoveVisit(visit));
     }
 
+    void removeDepot(PlanningDepot depot) {
+        logger.debug("Removing depot from the Solver");
+        assertSolverIsAlive();
+        solver.addProblemFactChange(new RemoveDepot(depot));
+    }
+
     void addVehicle(PlanningVehicle vehicle) {
-        logger.debug("Adding new vehicle in the Solver");
+        logger.debug("Adding new vehicle to the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new AddVehicle(vehicle));
     }
 
     void removeVehicle(PlanningVehicle vehicle) {
-        logger.debug("removing vehicle the Solver");
+        logger.debug("removing vehicle from the Solver");
         assertSolverIsAlive();
         solver.addProblemFactChange(new RemoveVehicle(vehicle));
     }

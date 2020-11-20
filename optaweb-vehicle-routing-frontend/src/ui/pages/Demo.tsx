@@ -51,7 +51,7 @@ export const ID_EXPORT_BUTTON = 'export-button';
 
 export interface StateProps {
   distance: string;
-  depot: Location | null;
+  depots: Location[];
   vehicleCount: number;
   visits: Location[];
   routes: RouteWithTrack[];
@@ -75,7 +75,7 @@ export interface DispatchProps {
 const mapStateToProps = ({ plan, demo, serverInfo, userViewport }: AppState): StateProps => ({
   distance: plan.distance,
   vehicleCount: plan.vehicles.length,
-  depot: plan.depot,
+  depots: plan.depots,
   visits: plan.visits,
   routes: plan.routes,
   isDemoLoading: demo.isLoading,
@@ -136,7 +136,7 @@ export class Demo extends React.Component<DemoProps, DemoState> {
     const { selectedId } = this.state;
     const {
       distance,
-      depot,
+      depots,
       vehicleCount,
       visits,
       routes,
@@ -172,7 +172,7 @@ export class Demo extends React.Component<DemoProps, DemoState> {
             addHandler={this.handleSearchResultClick}
           />
           <LocationList
-            depot={depot}
+            depots={depots}
             visits={visits}
             removeHandler={removeLocationHandler}
             selectHandler={this.onSelectLocation}
@@ -221,13 +221,13 @@ export class Demo extends React.Component<DemoProps, DemoState> {
             <FlexItem>
               <Button
                 id={ID_EXPORT_BUTTON}
-                isDisabled={!depot || isDemoLoading}
+                isDisabled={!depots || isDemoLoading}
                 style={{ marginBottom: 16, marginLeft: 16 }}
                 onClick={exportDataSet}
               >
                 Export
               </Button>
-              {(depot === null && (
+              {(depots === null && (
                 <DemoDropdown
                   demos={demoNames}
                   onSelect={this.handleDemoLoadClick}
@@ -252,7 +252,7 @@ export class Demo extends React.Component<DemoProps, DemoState> {
             selectedId={selectedId}
             clickHandler={this.handleMapClick}
             removeHandler={removeLocationHandler}
-            depot={depot}
+            depots={depots}
             routes={routes}
             visits={visits}
           />

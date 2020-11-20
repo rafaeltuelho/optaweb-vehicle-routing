@@ -38,17 +38,16 @@ class PortableRoutingPlanFactory {
     static PortableRoutingPlan fromRoutingPlan(RoutingPlan routingPlan) {
         PortableDistance distance = PortableDistance.fromDistance(routingPlan.distance());
         List<PortableVehicle> vehicles = portableVehicles(routingPlan.vehicles());
-        //TODO: change to support list of depots
-        PortableLocation depot = routingPlan.depot().map(PortableLocation::fromLocation).orElse(null);
+        List<PortableLocation> depots = portableDepots(routingPlan.depots());
         List<PortableLocation> visits = portableVisits(routingPlan.visits());
         List<PortableRoute> routes = routingPlan.routes().stream()
                 .map(routeWithTrack -> new PortableRoute(
                         PortableVehicle.fromVehicle(routeWithTrack.vehicle()),
-                        depot,
+                        portableDepot(routeWithTrack.depot()),
                         portableVisits(routeWithTrack.visits()),
                         portableTrack(routeWithTrack.track())))
                 .collect(toList());
-        return new PortableRoutingPlan(distance, vehicles, depot, visits, routes);
+        return new PortableRoutingPlan(distance, vehicles, depots, visits, routes);
     }
 
     private static List<List<PortableCoordinates>> portableTrack(List<List<Coordinates>> track) {
@@ -64,8 +63,18 @@ class PortableRoutingPlanFactory {
 
     private static List<PortableLocation> portableVisits(List<Location> visits) {
         return visits.stream()
-                .map(PortableLocation::fromLocation)
+                .map(PortableLocation::fromDomainLocation)
                 .collect(toList());
+    }
+
+    private static List<PortableLocation> portableDepots(List<Location> depots) {
+        return depots.stream()
+                .map(PortableLocation::fromDomainLocation)
+                .collect(toList());
+    }
+
+    private static PortableLocation portableDepot(Location depot) {
+        return PortableLocation.fromDomainLocation(depot);
     }
 
     private static List<PortableVehicle> portableVehicles(List<Vehicle> vehicles) {

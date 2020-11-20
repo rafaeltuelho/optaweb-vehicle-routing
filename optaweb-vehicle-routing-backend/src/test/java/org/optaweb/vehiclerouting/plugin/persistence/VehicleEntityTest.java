@@ -18,7 +18,10 @@ package org.optaweb.vehiclerouting.plugin.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
+import org.optaweb.vehiclerouting.domain.LocationType;
 
 class VehicleEntityTest {
 
@@ -27,9 +30,14 @@ class VehicleEntityTest {
         long id = 321;
         String name = "Vehicle XY";
         int capacity = 11;
-        VehicleEntity vehicleEntity = new VehicleEntity(id, name, capacity);
+        LocationEntity locationEntity = new LocationEntity(
+            1L, LocationType.VEHICLE, 
+            BigDecimal.ZERO, BigDecimal.ZERO, 
+            "test");
+        VehicleEntity vehicleEntity = new VehicleEntity(id, name, capacity, locationEntity);
         assertThat(vehicleEntity.getId()).isEqualTo(id);
         assertThat(vehicleEntity.getName()).isEqualTo(name);
         assertThat(vehicleEntity.getCapacity()).isEqualTo(capacity);
+        assertThat(vehicleEntity.getLocation()).isEqualTo(locationEntity);
     }
 }

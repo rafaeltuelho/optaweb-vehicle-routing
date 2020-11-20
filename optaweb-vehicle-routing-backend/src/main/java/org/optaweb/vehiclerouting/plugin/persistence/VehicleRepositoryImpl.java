@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import org.optaweb.vehiclerouting.domain.Coordinates;
+import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
@@ -35,23 +37,38 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(VehicleRepositoryImpl.class);
     private final VehicleCrudRepository repository;
+    private final LocationCrudRepository locationRepository;
 
-    public VehicleRepositoryImpl(VehicleCrudRepository repository) {
+    public VehicleRepositoryImpl(VehicleCrudRepository repository, LocationCrudRepository locationRepository) {
         this.repository = repository;
+        this.locationRepository = locationRepository;
     }
 
-    @Override
-    public Vehicle createVehicle(int capacity) {
-        long id = repository.save(new VehicleEntity(0, null, capacity)).getId();
-        VehicleEntity vehicleEntity = repository.save(new VehicleEntity(id, "Vehicle " + id, capacity));
-        Vehicle vehicle = toDomain(vehicleEntity);
-        logger.info("Created vehicle {}.", vehicle);
-        return vehicle;
-    }
+    // @Override
+    // public Vehicle createVehicle(int capacity) {
+    //     long id = repository.save(new VehicleEntity(0, null, capacity)).getId();
+    //     VehicleEntity vehicleEntity = repository.save(new VehicleEntity(id, "Vehicle " + id, capacity));
+    //     Vehicle vehicle = toDomain(vehicleEntity);
+    //     logger.info("Created vehicle {}.", vehicle);
+    //     return vehicle;
+    // }
 
     @Override
-    public Vehicle createVehicle(VehicleData vehicleData) {
-        VehicleEntity vehicleEntity = repository.save(new VehicleEntity(0, vehicleData.name(), vehicleData.capacity()));
+    public Vehicle createVehicleWithLocation(VehicleData vehicleData) {
+        Optional<LocationEntity> locationEntity = locationRepository.findById(vehicleData.location().id());
+       if (!locationEntity.isPresent()) {
+           //TODO: create the vehicle location or thow an IllegalArgumentException?
+           logger.warn("Vehicle location {} does not exist yet.", vehicleData.location());
+           Location domainVehicleLocation = vehicleData.location();
+           LocationEntity vehiclelocationEntity = new LocationEntity(
+            domainVehicleLocation.id(), domainVehicleLocation.type(), 
+            domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(), 
+            domainVehicleLocation.description());
+            locationEntity = Optional.of(locationRepository.save(vehiclelocationEntity));
+            logger.info("Created vehicle location {}.", vehiclelocationEntity);
+        }
+    
+        VehicleEntity vehicleEntity = repository.save(new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity(), locationEntity.get()));
         Vehicle vehicle = toDomain(vehicleEntity);
         logger.info("Created vehicle {}.", vehicle);
         return vehicle;
@@ -87,13 +104,22 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
     @Override
     public void update(Vehicle vehicle) {
-        repository.save(new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity()));
+        //FIX ME: not sure if this is allowed by design?!
+        Optional<LocationEntity> locationEntity = locationRepository.findById(vehicle.location().id());
+        repository.save(new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), locationEntity.get()));
     }
 
     private static Vehicle toDomain(VehicleEntity vehicleEntity) {
+        Location location = new Location(
+            vehicleEntity.getLocation().getId(),
+            vehicleEntity.getLocation().getype(),
+            new Coordinates(vehicleEntity.getLocation().getLatitude(), vehicleEntity.getLocation().getLongitude()),
+            vehicleEntity.getLocation().getDescription());
+
         return VehicleFactory.createVehicle(
                 vehicleEntity.getId(),
                 vehicleEntity.getName(),
-                vehicleEntity.getCapacity());
+                vehicleEntity.getCapacity(),
+                location);
     }
 }

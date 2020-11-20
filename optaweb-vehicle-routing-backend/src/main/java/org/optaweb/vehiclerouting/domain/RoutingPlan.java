@@ -38,7 +38,7 @@ public class RoutingPlan {
 
     private final Distance distance;
     private final List<Vehicle> vehicles;
-    private final Location depot;
+    private final List<Location> depots;
     private final List<Location> visits;
     private final List<RouteWithTrack> routes;
 
@@ -54,17 +54,18 @@ public class RoutingPlan {
     public RoutingPlan(
             Distance distance,
             List<Vehicle> vehicles,
-            Location depot,
+            List<Location> depots,
             List<Location> visits,
             List<RouteWithTrack> routes) {
         this.distance = Objects.requireNonNull(distance);
         this.vehicles = new ArrayList<>(Objects.requireNonNull(vehicles));
-        this.depot = depot;
+        this.depots = new ArrayList<>(Objects.requireNonNull(depots));
         this.visits = new ArrayList<>(Objects.requireNonNull(visits));
         this.routes = new ArrayList<>(Objects.requireNonNull(routes));
-        if (depot == null) {
+        
+        if (depots.isEmpty()) {
             if (!routes.isEmpty()) {
-                throw new IllegalArgumentException("Routes must be empty when depot is null");
+                throw new IllegalArgumentException("Routes must be empty when there is no depot");
             }
         } else if (routes.size() != vehicles.size()) {
             throw new IllegalArgumentException(describeVehiclesRoutesInconsistency(
@@ -156,13 +157,14 @@ public class RoutingPlan {
     }
 
     /**
-     * The depot.
+     * All visits that are part of the routing problem.
      *
-     * @return depot (may be missing)
+     * @return all visits
      */
-    public Optional<Location> depot() {
-        return Optional.ofNullable(depot);
+    public List<Location> depots() {
+        return Collections.unmodifiableList(depots);
     }
+
 
     /**
      * Routing plan is empty when there is no depot, no vehicles and no routes.
@@ -171,6 +173,6 @@ public class RoutingPlan {
      */
     public boolean isEmpty() {
         // No need to check routes. No depot => no routes.
-        return depot == null && vehicles.isEmpty();
+        return depots.isEmpty() && vehicles.isEmpty();
     }
 }

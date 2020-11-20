@@ -46,7 +46,7 @@ class LocationEntity {
     private BigDecimal longitude;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(255)")
+    @Column(columnDefinition = "VARCHAR(50)")
     private LocationType type;
     private String description;
 
@@ -81,7 +81,7 @@ class LocationEntity {
     String getDescription() {
         return description;
     }
-
+    
     @Override
     public String toString() {
         return "LocationEntity{" +

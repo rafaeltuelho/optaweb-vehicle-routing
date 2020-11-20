@@ -3,135 +3,209 @@ name: "Belgium cities"
 vehicles:
   - name: "Vehicle 1"
     capacity: 10
+    location:
+      label: "Brussels"
+      type: "VEHICLE"
+      lat: 50.85
+      lng: 4.35
   - name: "Vehicle 2"
     capacity: 10
+    location:
+      label: "Brussels"
+      type: "VEHICLE"
+      lat: 50.85
+      lng: 4.35
   - name: "Vehicle 3"
     capacity: 10
+    location:
+      label: "Brussels"
+      type: "VEHICLE"
+      lat: 50.85
+      lng: 4.35
   - name: "Vehicle 4"
     capacity: 10
+    location:
+      label: "Nazareth"
+      type: "VEHICLE"
+      lat: 50.95
+      lng: 3.57
   - name: "Vehicle 5"
     capacity: 10
+    location:
+      label: "Nazareth"
+      type: "VEHICLE"
+      lat: 50.95
+      lng: 3.57
   - name: "Vehicle 6"
     capacity: 10
-depot:
-  label: "Brussels"
-  lat: 50.85
-  lng: 4.35
+    location:
+      label: "Nazareth"
+      type: "VEHICLE"
+      lat: 50.95
+      lng: 3.57
+depots:
+  - label: "Brussels"
+    type: "DEPOT"
+    lat: 50.85
+    lng: 4.35
+  - label: "Nazareth"
+    type: "DEPOT"
+    lat: 50.95
+    lng: 3.57
 visits:
   - label: "Aalst"
+    type: "VISIT"
     lat: 50.933333
     lng: 4.033333
   - label: "Anderlecht"
+    type: "VISIT"
     lat: 50.833333
     lng: 4.333333
   - label: "Antwerp"
+    type: "VISIT"
     lat: 51.217778
     lng: 4.400278
   - label: "Beringen"
+    type: "VISIT"
     lat: 51.033333
     lng: 5.216667
   - label: "Bruges"
+    type: "VISIT"
     lat: 51.216667
     lng: 3.233333
   - label: "Charleroi"
+    type: "VISIT"
     lat: 50.4
     lng: 4.433333
   - label: "Chatelet"
+    type: "VISIT"
     lat: 50.4
     lng: 4.516667
   - label: "Dendermonde"
+    type: "VISIT"
     lat: 51.033333
     lng: 4.1
   - label: "Geel"
+    type: "VISIT"
     lat: 51.166667
     lng: 5.0
   - label: "Genk"
+    type: "VISIT"
     lat: 50.966667
     lng: 5.5
   - label: "Ghent"
+    type: "VISIT"
     lat: 51.05
     lng: 3.733333
   - label: "Halle"
+    type: "VISIT"
     lat: 50.733333
     lng: 4.233333
   - label: "Hasselt"
+    type: "VISIT"
     lat: 50.93
     lng: 5.3375
   - label: "Ixelles"
+    type: "VISIT"
     lat: 50.833333
     lng: 4.366667
   - label: "Kortrijk"
+    type: "VISIT"
     lat: 50.833333
     lng: 3.266667
   - label: "La Louviere"
+    type: "VISIT"
     lat: 50.466667
     lng: 4.183333
   - label: "Leuven"
+    type: "VISIT"
     lat: 50.883333
     lng: 4.7
   - label: "Liege"
+    type: "VISIT"
     lat: 50.633333
     lng: 5.566667
   - label: "Lier"
+    type: "VISIT"
     lat: 51.133333
     lng: 4.566667
   - label: "Lokeren"
+    type: "VISIT"
     lat: 51.1
     lng: 3.983333
   - label: "Mechelen"
+    type: "VISIT"
     lat: 51.016667
     lng: 4.466667
   - label: "Molenbeek"
+    type: "VISIT"
     lat: 50.857778
     lng: 4.315833
   - label: "Mons"
+    type: "VISIT"
     lat: 50.45
     lng: 3.95
   - label: "Namur"
+    type: "VISIT"
     lat: 50.466667
     lng: 4.866667
   - label: "Ninove"
+    type: "VISIT"
     lat: 50.833333
     lng: 4.016667
   - label: "Roeselare"
+    type: "VISIT"
     lat: 50.933333
     lng: 3.116667
   - label: "Schaerbeek"
+    type: "VISIT"
     lat: 50.866667
     lng: 4.383333
   - label: "Seraing"
+    type: "VISIT"
     lat: 50.583333
     lng: 5.5
   - label: "Sint Niklaas"
+    type: "VISIT"
     lat: 51.166667
     lng: 4.133333
   - label: "Sint Truiden"
+    type: "VISIT"
     lat: 50.8
     lng: 5.183333
   - label: "Tienen"
+    type: "VISIT"
     lat: 50.8
     lng: 4.933333
   - label: "Tournai"
+    type: "VISIT"
     lat: 50.6
     lng: 3.383333
   - label: "Turnhout"
+    type: "VISIT"
     lat: 51.316667
     lng: 4.95
   - label: "Uccle"
+    type: "VISIT"
     lat: 50.8
     lng: 4.333333
   - label: "Verviers"
+    type: "VISIT"
     lat: 50.583333
     lng: 5.85
   - label: "Vilvoorde"
+    type: "VISIT"
     lat: 50.933333
     lng: 4.416667
   - label: "Waregem"
+    type: "VISIT"
     lat: 50.883333
     lng: 3.416667
   - label: "Wavre"
+    type: "VISIT"
     lat: 50.716667
     lng: 4.6
   - label: "Ypres"
+    type: "VISIT"
     lat: 50.85
     lng: 2.883333

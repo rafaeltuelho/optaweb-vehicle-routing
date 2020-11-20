@@ -27,7 +27,7 @@ export interface Props {
   selectedId: number;
   clickHandler: (e: React.SyntheticEvent<HTMLElement>) => void;
   removeHandler: (id: number) => void;
-  depot: Location | null;
+  depots: Location[];
   visits: Location[];
   routes: Omit<RouteWithTrack, 'vehicle'>[];
   boundingBox: [LatLng, LatLng] | null;
@@ -46,7 +46,7 @@ const RouteMap: React.FC<Props> = ({
   boundingBox,
   userViewport,
   selectedId,
-  depot,
+  depots,
   visits,
   routes,
   clickHandler,
@@ -75,21 +75,21 @@ const RouteMap: React.FC<Props> = ({
         url={tileLayerUrl}
       />
       <ZoomControl position="topright" />
-      {depot && (
-        <LocationMarker
-          location={depot}
-          // isDepot
-          isDepot={depot.type === LocationType.Depot}
-          isSelected={depot.id === selectedId}
-          removeHandler={removeHandler}
-        />
-      )}
+      {depots.map((depot) => (
+          <LocationMarker
+            key={depot.id}
+            location={depot}
+            // isDepot
+            isDepot={depot.type === LocationType.Depot}
+            isSelected={depot.id === selectedId}
+            removeHandler={removeHandler}
+          />
+      ))}
       {visits.map((location) => (
         <LocationMarker
           key={location.id}
           location={location}
-          // isDepot={false}
-          isDepot={location.type === LocationType.Depot}
+          isDepot={false}
           isSelected={location.id === selectedId}
           removeHandler={removeHandler}
         />

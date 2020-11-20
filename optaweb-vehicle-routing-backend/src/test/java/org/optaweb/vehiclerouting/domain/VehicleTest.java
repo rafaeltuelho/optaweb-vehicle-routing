@@ -25,7 +25,7 @@ class VehicleTest {
 
     @Test
     void constructor_params_must_not_be_null() {
-        assertThatNullPointerException().isThrownBy(() -> new Vehicle(0, null, 0));
+        assertThatNullPointerException().isThrownBy(() -> new Vehicle(0, null, 0, null));
     }
 
     @Test
@@ -33,11 +33,14 @@ class VehicleTest {
         final long id = 0;
         final String description = "test description";
         final int capacity = 1;
-        final Vehicle vehicle = new Vehicle(id, description, capacity);
+        final Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        final Vehicle vehicle = new Vehicle(id, description, capacity, vehicleLocation);
 
         assertThat(vehicle)
                 // different ID
-                .isNotEqualTo(new Vehicle(id + 1, description, capacity))
+                .isNotEqualTo(new Vehicle(id + 1, description, capacity, vehicleLocation))
+                // different Location
+                .isNotEqualTo(new Vehicle(id + 1, description, capacity, LocationFactory.testLocation(2, LocationType.VEHICLE)))
                 // null
                 .isNotEqualTo(null)
                 // different class
@@ -45,17 +48,17 @@ class VehicleTest {
                 // same object -> OK
                 .isEqualTo(vehicle)
                 // same properties -> OK
-                .isEqualTo(new Vehicle(id, description, capacity))
+                .isEqualTo(new Vehicle(id, description, capacity, vehicleLocation))
                 // same ID, different description -> OK
-                .isEqualTo(new Vehicle(id, description + "x", capacity))
+                .isEqualTo(new Vehicle(id, description + "x", capacity, vehicleLocation))
                 // same ID, different capacity -> OK
-                .isEqualTo(new Vehicle(id, description, capacity + 1));
+                .isEqualTo(new Vehicle(id, description, capacity + 1, vehicleLocation));
     }
 
     @Test
     void equal_vehicles_must_have_same_hashcode() {
         long id = 1;
-        assertThat(new Vehicle(id, "description 1", 1))
-                .hasSameHashCodeAs(new Vehicle(id, "description 2", 2));
+        assertThat(new Vehicle(id, "description 1", 1, LocationFactory.testLocation(1, LocationType.VEHICLE)))
+                .hasSameHashCodeAs(new Vehicle(id, "description 2", 2, LocationFactory.testLocation(1, LocationType.VEHICLE)));
     }
 }

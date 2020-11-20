@@ -18,6 +18,7 @@ package org.optaweb.vehiclerouting.service.demo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import static java.util.stream.Collectors.toList;
 import java.util.List;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
@@ -72,13 +73,10 @@ public class DemoService {
     @Async
     public void loadDemo(String name) {
         RoutingProblem routingProblem = routingProblems.byName(name);
-        // Add depot
-        //TODO: Depot will be a list
-        routingProblem.depot().ifPresent(depot -> addWithRetry(LocationType.DEPOT, depot.coordinates(), depot.description()));
-
+        routingProblem.depots().forEach(depot -> addWithRetry(LocationType.DEPOT, depot.coordinates(), depot.description()));
         // TODO start randomizing only after using all available cities (=> reproducibility for small demos)
         routingProblem.visits().forEach(visit -> addWithRetry(LocationType.VISIT, visit.coordinates(), visit.description()));
-        routingProblem.vehicles().forEach(vehicleService::createVehicle);
+        routingProblem.vehicles().forEach(vehicleData -> vehicleService.createVehicleWithLocation(vehicleData));
     }
 
     private void addWithRetry(LocationType type, Coordinates coordinates, String description) {
@@ -93,11 +91,12 @@ public class DemoService {
     }
 
     public String exportDataSet() {
-        // FIXME still relying on the fact that the first location in the repository is the depot
-        List<Location> visits = new ArrayList<>(locationRepository.locations());
-        Location depot = visits.isEmpty() ? null : visits.remove(0);
+        List<Location> visits = 
+            new ArrayList<>(locationRepository.locations().stream().filter(l -> l.type() == LocationType.VISIT).collect(toList()));
+        List<Location> depots = 
+            new ArrayList<>(locationRepository.locations().stream().filter(l -> l.type() == LocationType.DEPOT).collect(toList()));
         List<Vehicle> vehicles = vehicleRepository.vehicles();
         return dataSetMarshaller.marshal(new RoutingProblem(
-                "Custom Vehicle Routing instance", vehicles, depot, visits));
+                "Custom Vehicle Routing instance", vehicles, depots, visits));
     }
 }

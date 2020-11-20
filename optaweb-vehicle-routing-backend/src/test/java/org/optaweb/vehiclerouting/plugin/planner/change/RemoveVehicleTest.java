@@ -56,7 +56,7 @@ class RemoveVehicleTest {
 
         VehicleRoutingSolution solution = SolutionFactory.solutionFromVisits(
                 Arrays.asList(removedVehicle, otherVehicle),
-                depot,
+                Arrays.asList(depot),
                 Arrays.asList(firstVisit, lastVisit));
 
         when(scoreDirector.getWorkingSolution()).thenReturn(solution);
@@ -98,7 +98,7 @@ class RemoveVehicleTest {
 
         VehicleRoutingSolution solution = SolutionFactory.solutionFromVisits(
                 Arrays.asList(wrongVehicle),
-                depot,
+                Arrays.asList(depot),
                 Collections.emptyList());
 
         when(scoreDirector.getWorkingSolution()).thenReturn(solution);

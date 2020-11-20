@@ -1,10 +1,14 @@
 ---
 name: "Belgium test"
-depot:
-  label: "Brussels"
-  type: "DEPOT"
-  lat: 50.85
-  lng: 4.35
+depots:
+  - label: "Brussels"
+    type: "DEPOT"
+    lat: 50.85
+    lng: 4.35
+  - label: "Nazareth"
+    type: "DEPOT"
+    lat: 50.95
+    lng: 3.57
 visits:
   - label: "Aalst"
     type: "VISIT"
@@ -30,7 +34,22 @@ visits:
 vehicles:
   - name: "vehicle 1"
     capacity: 10
+    location:
+      label: "Brussels"
+      type: "VEHICLE"
+      lat: 50.85
+      lng: 4.35
   - name: "vehicle 2"
     capacity: 12
+    location:
+      label: "Nazareth"
+      type: "VEHICLE"
+      lat: 50.95
+      lng: 3.57
   - name: "vehicle 3"
     capacity: 1000000
+    location:
+      label: "Nazareth"
+      type: "VEHICLE"
+      lat: 50.95
+      lng: 3.57

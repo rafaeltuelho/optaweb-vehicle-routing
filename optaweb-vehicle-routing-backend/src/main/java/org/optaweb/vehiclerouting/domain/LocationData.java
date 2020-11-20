@@ -36,7 +36,7 @@ public class LocationData {
      * @param description never {@code null}
      */
     public LocationData(LocationType type, Coordinates coordinates, String description) {
-        this.type = Objects.requireNonNullElse(type, LocationType.VISIT);
+        this.type = Objects.requireNonNull(type);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.description = Objects.requireNonNull(description);
     }

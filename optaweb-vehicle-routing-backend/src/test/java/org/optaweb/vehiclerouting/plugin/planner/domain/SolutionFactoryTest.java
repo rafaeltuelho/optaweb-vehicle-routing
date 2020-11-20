@@ -45,7 +45,7 @@ class SolutionFactoryTest {
 
         VehicleRoutingSolution solutionWithDepot = SolutionFactory.solutionFromVisits(
                 singletonList(vehicle),
-                depot,
+                singletonList(depot),
                 singletonList(visit));
         assertThat(solutionWithDepot.getVehicleList()).containsExactly(vehicle);
         assertThat(vehicle.getDepot()).isEqualTo(depot);

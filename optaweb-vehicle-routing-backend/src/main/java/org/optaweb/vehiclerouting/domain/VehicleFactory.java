@@ -32,20 +32,21 @@ public class VehicleFactory {
      * @param capacity vehicle's capacity
      * @return vehicle data
      */
-    public static VehicleData vehicleData(String name, int capacity) {
-        return new VehicleData(name, capacity);
+    public static VehicleData vehicleData(String name, int capacity, Location location) {
+        return new VehicleData(name, capacity, location);
     }
 
     /**
-     * Create a new vehicle with the given ID, name and capacity.
+     * Create a new vehicle with the given ID, name capacity and location.
      *
      * @param id vehicle's ID
      * @param name vehicle's name
      * @param capacity vehicle's capacity
+     * @param location vehicle's location
      * @return new vehicle
      */
-    public static Vehicle createVehicle(long id, String name, int capacity) {
-        return new Vehicle(id, name, capacity);
+    public static Vehicle createVehicle(long id, String name, int capacity, Location location) {
+        return new Vehicle(id, name, capacity, location);
     }
 
     /**
@@ -55,6 +56,6 @@ public class VehicleFactory {
      * @return new testing vehicle instance
      */
     public static Vehicle testVehicle(long id) {
-        return new Vehicle(id, "Vehicle " + id, 0);
+        return new Vehicle(id, "Vehicle " + id, 0, new Location(0L, LocationType.VEHICLE, Coordinates.valueOf(.1, .1)));
     }
 }

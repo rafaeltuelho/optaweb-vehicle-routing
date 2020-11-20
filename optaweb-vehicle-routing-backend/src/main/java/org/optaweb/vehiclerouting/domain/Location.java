@@ -24,7 +24,6 @@ import java.util.Objects;
 public class Location extends LocationData {
 
     private final long id;
-    private final LocationType type;
 
     public Location(long id, LocationType type, Coordinates coordinates) {
         // TODO remove this?
@@ -34,7 +33,6 @@ public class Location extends LocationData {
     public Location(long id, LocationType type, Coordinates coordinates, String description) {
         super(type, coordinates, description);
         this.id = id;
-        this.type = type;
     }
 
     /**
@@ -57,7 +55,7 @@ public class Location extends LocationData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type);
+        return Objects.hash(id);
     }
 
     @Override
@@ -68,8 +66,6 @@ public class Location extends LocationData {
             return false;
         Location other = (Location) obj;
         if (id != other.id)
-            return false;
-        if (type != other.type)
             return false;
 
         return true;

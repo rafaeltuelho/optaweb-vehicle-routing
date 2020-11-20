@@ -54,21 +54,19 @@ public class SolutionFactory {
      * <strong><em>Elements of the argument collections are NOT cloned.</em></strong>
      *
      * @param vehicles vehicles
-     * @param depot depot
+     * @param depots depots
      * @param visits visits
-     * @return solution containing the given vehicles, depot, visits and their locations
+     * @return solution containing the given vehicles, depots, visits and their locations
      */
     public static VehicleRoutingSolution solutionFromVisits(
             List<PlanningVehicle> vehicles,
-            PlanningDepot depot,
+            List<PlanningDepot> depots,
             List<PlanningVisit> visits) {
         VehicleRoutingSolution solution = new VehicleRoutingSolution();
         solution.setVehicleList(new ArrayList<>(vehicles));
-        solution.setDepotList(new ArrayList<>(1));
-        if (depot != null) { //TODO: change to allow multiple Depots
-            solution.getDepotList().add(depot);
-            moveAllVehiclesToDepot(vehicles, depot); // TODO: not needed when vehicles could start from different locations
-        }
+        solution.setDepotList(new ArrayList<>(depots));
+        //TODO: Vehicle now requires it's (initial) Loction to be know upfront!!!
+        //moveAllVehiclesToDepot(vehicles, depot);
         solution.setVisitList(new ArrayList<>(visits));
         solution.setScore(HardSoftLongScore.ZERO);
         return solution;

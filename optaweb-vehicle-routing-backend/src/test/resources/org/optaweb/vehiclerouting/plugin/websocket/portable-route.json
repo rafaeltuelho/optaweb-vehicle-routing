@@ -1,5 +1,9 @@
 {
-  "vehicle": {"id": 13, "name": "Vehicle", "capacity": 45317},
+  "vehicle": {
+    "id": 13, 
+    "name": "Vehicle", 
+    "capacity": 45317, 
+    "location": {"id": 8, "type": "DEPOT", "lat": 42.6501218, "lng": -71.8835449, "description": "Test depot"} },
   "depot": {"id": 8, "type": "DEPOT", "lat": 42.6501218, "lng": -71.8835449, "description": "Test depot"},
   "visits": [
     {"id": 100, "type": "VISIT", "lat": 42.7066596, "lng": -72.4934873, "description": "Visit 1"},

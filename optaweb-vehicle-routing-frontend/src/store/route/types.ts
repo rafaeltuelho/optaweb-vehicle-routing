@@ -24,6 +24,7 @@ export interface LatLng {
 export enum LocationType {
   Visit = 'VISIT',
   Depot = 'DEPOT',
+  Car = 'CAR',
   Other = 'OTHER',
 }
 
@@ -45,6 +46,7 @@ export interface Vehicle {
   readonly id: number;
   readonly name: string;
   readonly capacity: number;
+  //TODO: add Location
 }
 
 export interface Route {
@@ -61,8 +63,7 @@ export interface RouteWithTrack extends Route {
 export interface RoutingPlan {
   readonly distance: string;
   readonly vehicles: Vehicle[];
-  readonly depot: Location | null;
-  // readonly depot: Location[];
+  readonly depots: Location[];
   readonly visits: Location[];
   readonly routes: RouteWithTrack[];
 }

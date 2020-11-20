@@ -70,14 +70,14 @@ class PortableLocationTest {
     @Test
     void fromLocation() {
         Location location = new Location(17, LocationType.DEPOT, Coordinates.valueOf(5.1, -0.0007), "Hello, world!");
-        PortableLocation portableLocation = PortableLocation.fromLocation(location);
+        PortableLocation portableLocation = PortableLocation.fromDomainLocation(location);
         assertThat(portableLocation.getId()).isEqualTo(location.id());
         assertThat(portableLocation.getLatitude()).isEqualTo(location.coordinates().latitude());
         assertThat(portableLocation.getLongitude()).isEqualTo(location.coordinates().longitude());
         assertThat(portableLocation.getDescription()).isEqualTo(location.description());
 
         assertThatNullPointerException()
-                .isThrownBy(() -> PortableLocation.fromLocation(null))
+                .isThrownBy(() -> PortableLocation.fromDomainLocation(null))
                 .withMessageContaining("location");
     }
 

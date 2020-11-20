@@ -27,8 +27,9 @@ class VehicleFactoryTest {
         long vehicleId = 4;
         String name = "Vehicle four";
         int capacity = 99;
+        Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
 
-        Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity);
+        Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity, vehicleLocation);
 
         assertThat(vehicle.id()).isEqualTo(vehicleId);
         assertThat(vehicle.name()).isEqualTo(name);
@@ -39,8 +40,9 @@ class VehicleFactoryTest {
     void vehicleData() {
         String name = "vehicle name";
         int capacity = 1000;
+        Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
 
-        VehicleData vehicleData = VehicleFactory.vehicleData(name, capacity);
+        VehicleData vehicleData = VehicleFactory.vehicleData(name, capacity, vehicleLocation);
         assertThat(vehicleData.name()).isEqualTo(name);
         assertThat(vehicleData.capacity()).isEqualTo(capacity);
     }

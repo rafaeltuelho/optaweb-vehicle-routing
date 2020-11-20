@@ -33,12 +33,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
 import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Route;
 import org.optaweb.vehiclerouting.domain.RouteWithTrack;
 import org.optaweb.vehiclerouting.domain.RoutingPlan;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
 import org.optaweb.vehiclerouting.domain.Vehicle;
+import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
 import org.optaweb.vehiclerouting.service.demo.DemoService;
 import org.optaweb.vehiclerouting.service.error.ErrorEvent;
@@ -78,7 +80,7 @@ class WebSocketControllerTest {
         // arrange
         Distance distance = Distance.ofMillis(987_654_321);
         Location depot = new Location(1, LocationType.VISIT, Coordinates.valueOf(3, 5));
-        Vehicle vehicle = VehicleFactory.createVehicle(1, "vehicle", 77);
+        Vehicle vehicle = VehicleFactory.createVehicle(1, "vehicle", 77, depot);
         Location visit = new Location(2, LocationType.VISIT, Coordinates.valueOf(321, 123));
         Route route = new Route(vehicle, depot, singletonList(visit));
         Coordinates pointOnTrack = Coordinates.valueOf(0, 0);
@@ -86,7 +88,7 @@ class WebSocketControllerTest {
         RoutingPlan plan = new RoutingPlan(
                 distance,
                 singletonList(vehicle),
-                depot,
+                singletonList(depot),
                 singletonList(visit),
                 singletonList(routeWithTrack));
         when(routeListener.getBestRoutingPlan()).thenReturn(plan);
@@ -96,9 +98,9 @@ class WebSocketControllerTest {
 
         // assert
         assertThat(portableRoutingPlan.getDistance()).isEqualTo(PortableDistance.fromDistance(distance));
-        assertThat(portableRoutingPlan.getVisits()).containsExactly(PortableLocation.fromLocation(visit));
+        assertThat(portableRoutingPlan.getVisits()).containsExactly(PortableLocation.fromDomainLocation(visit));
         assertThat(portableRoutingPlan.getVehicles()).containsExactly(PortableVehicle.fromVehicle(vehicle));
-        assertThat(portableRoutingPlan.getDepot()).isEqualTo(PortableLocation.fromLocation(depot));
+        assertThat(portableRoutingPlan.getDepots()).containsExactly(PortableLocation.fromDomainLocation(depot));
         assertThat(portableRoutingPlan.getRoutes()).hasSize(1);
     }
 
@@ -113,11 +115,11 @@ class WebSocketControllerTest {
         BoundingBox boundingBox = new BoundingBox(southWest, northEast);
         when(regionService.boundingBox()).thenReturn(boundingBox);
 
-        Location depot = new Location(1, LocationType.VISIT, Coordinates.valueOf(1.0, 7), "Depot");
+        List<Location> depots = Arrays.asList(new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 7), "Depot"));
         List<Location> visits = Arrays.asList(new Location(2, LocationType.VISIT, Coordinates.valueOf(2.0, 9), "Visit"));
         List<Vehicle> vehicles = Arrays.asList(VehicleFactory.testVehicle(1));
         String demoName = "Testing problem";
-        RoutingProblem routingProblem = new RoutingProblem(demoName, vehicles, depot, visits);
+        RoutingProblem routingProblem = new RoutingProblem(demoName, vehicles, depots, visits);
         when(demoService.demos()).thenReturn(Arrays.asList(routingProblem));
 
         // act
@@ -153,8 +155,13 @@ class WebSocketControllerTest {
 
     @Test
     void addVehicle() {
-        webSocketController.addVehicle();
-        verify(vehicleService).createVehicle();
+        Location depot = new Location(1, LocationType.VISIT, Coordinates.valueOf(3, 5));
+        Vehicle vehicle = VehicleFactory.createVehicle(1, "vehicle", 77, depot);
+        Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        VehicleData vehicleData = VehicleFactory.vehicleData("Vehicle Test", 10, vehicleLocation);
+        
+        webSocketController.addVehicle(PortableVehicle.fromVehicle(vehicle));
+        verify(vehicleService).createVehicleWithLocation(vehicleData);
     }
 
     @Test

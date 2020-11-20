@@ -25,7 +25,7 @@ class DataSet {
 
     private String name;
     private List<DataSetVehicle> vehicles;
-    private DataSetLocation depot;
+    private List<DataSetLocation> depots;
     private List<DataSetLocation> visits;
 
     /**
@@ -59,12 +59,12 @@ class DataSet {
      *
      * @return the depot (may be {@code null})
      */
-    public DataSetLocation getDepot() {
-        return depot;
+    public List<DataSetLocation> getDepots() {
+        return depots;
     }
 
-    public void setDepot(DataSetLocation depot) {
-        this.depot = depot;
+    public void setDepots(List<DataSetLocation> depots) {
+        this.depots = depots;
     }
 
     /**

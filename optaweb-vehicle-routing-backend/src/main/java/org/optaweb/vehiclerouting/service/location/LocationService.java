@@ -58,6 +58,7 @@ public class LocationService {
     }
 
     public synchronized boolean createLocation(LocationType type, Coordinates coordinates, String description) {
+        Objects.requireNonNull(type);
         Objects.requireNonNull(coordinates);
         Objects.requireNonNull(description);
         // TODO if (router.isLocationAvailable(coordinates))

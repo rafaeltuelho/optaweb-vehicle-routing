@@ -42,9 +42,9 @@ public class ShallowRoute {
      */
     public final long vehicleId;
     /**
-     * Depot ID.
+     * Depot IDs (immutable, never {@code null}).
      */
-    public final long depotId;
+    public final Long depotId;
     /**
      * Visit IDs (immutable, never {@code null}).
      */

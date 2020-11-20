@@ -28,16 +28,19 @@ class PortableVehicle {
     private final long id;
     private final String name;
     private final int capacity;
+    private final PortableLocation location;
 
     static PortableVehicle fromVehicle(Vehicle vehicle) {
         Objects.requireNonNull(vehicle, "vehicle must not be null");
-        return new PortableVehicle(vehicle.id(), vehicle.name(), vehicle.capacity());
+        return new PortableVehicle(
+            vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()));
     }
 
-    PortableVehicle(long id, String name, int capacity) {
+    PortableVehicle(long id, String name, int capacity, PortableLocation location) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.capacity = capacity;
+        this.location = Objects.requireNonNull(location);
     }
 
     public long getId() {
@@ -52,6 +55,10 @@ class PortableVehicle {
         return capacity;
     }
 
+    public PortableLocation getLocation() {
+        return location;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -63,12 +70,13 @@ class PortableVehicle {
         PortableVehicle vehicle = (PortableVehicle) o;
         return id == vehicle.id &&
                 capacity == vehicle.capacity &&
+                location.equals(vehicle.location) &&
                 name.equals(vehicle.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, capacity);
+        return Objects.hash(id, name, capacity, location);
     }
 
     @Override
@@ -77,6 +85,7 @@ class PortableVehicle {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +
+                ", location=" + location +
                 '}';
     }
 }

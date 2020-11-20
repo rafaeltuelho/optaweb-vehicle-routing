@@ -33,7 +33,7 @@ public interface VehicleRepository {
      * @param capacity vehicle's capacity
      * @return a new vehicle
      */
-    Vehicle createVehicle(int capacity);
+    // Vehicle createVehicle(int capacity);
 
     /**
      * Create a vehicle from the given data.
@@ -41,7 +41,7 @@ public interface VehicleRepository {
      * @param vehicleData vehicle data
      * @return a new vehicle
      */
-    Vehicle createVehicle(VehicleData vehicleData);
+    Vehicle createVehicleWithLocation(VehicleData vehicleData);
 
     /**
      * Get all vehicles.

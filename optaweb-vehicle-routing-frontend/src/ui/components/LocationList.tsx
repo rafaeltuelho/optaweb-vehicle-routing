@@ -23,7 +23,7 @@ import './LocationList.css';
 export interface LocationListProps {
   removeHandler: (id: number) => void;
   selectHandler: (id: number) => void;
-  depot: Location | null;
+  depots: Location[];
   visits: Location[];
 }
 
@@ -34,7 +34,7 @@ const renderEmptyLocationList: React.FC<LocationListProps> = () => (
 );
 
 const renderLocationList: React.FC<LocationListProps> = ({
-  depot,
+  depots,
   visits,
   removeHandler,
   selectHandler,
@@ -43,16 +43,20 @@ const renderLocationList: React.FC<LocationListProps> = ({
     <DataList
       aria-label="List of locations"
     >
-      {depot && (
-        <LocationItem
-          key={depot.id}
-          id={depot.id}
-          description={depot.description || null}
-          removeDisabled={visits.length > 0}
-          removeHandler={removeHandler}
-          selectHandler={selectHandler}
-        />
-      )}
+      {depots
+        .slice(0) // clone the array because
+        // sort is done in place (that would affect the route)
+        .sort((a, b) => a.id - b.id)
+        .map((depot) => (      
+          <LocationItem
+            key={depot.id}
+            id={depot.id}
+            description={depot.description || null}
+            removeDisabled={false}
+            removeHandler={removeHandler}
+            selectHandler={selectHandler}
+          />
+        ))}
       {visits
         .slice(0) // clone the array because
         // sort is done in place (that would affect the route)
@@ -72,7 +76,7 @@ const renderLocationList: React.FC<LocationListProps> = ({
 );
 
 const LocationList: React.FC<LocationListProps> = (props) => (
-  props.visits.length === 0 && props.depot === null
+  props.visits.length === 0 && props.depots === null
     ? renderEmptyLocationList(props)
     : renderLocationList(props)
 );

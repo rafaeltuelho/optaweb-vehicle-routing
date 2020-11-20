@@ -25,10 +25,12 @@ public class VehicleData {
 
     private final String name;
     private final int capacity;
+    private final Location location;
 
-    VehicleData(String name, int capacity) {
+    VehicleData(String name, int capacity, Location location) {
         this.name = Objects.requireNonNull(name);
         this.capacity = capacity;
+        this.location = Objects.requireNonNull(location);
     }
 
     /**
@@ -49,6 +51,15 @@ public class VehicleData {
         return capacity;
     }
 
+    /**
+     * Vehicle's location.
+     *
+     * @return vehicle's location
+     */
+    public Location location() {
+        return location;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,12 +70,13 @@ public class VehicleData {
         }
         VehicleData that = (VehicleData) o;
         return capacity == that.capacity &&
+                location.equals(that.location) &&
                 name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, capacity);
+        return Objects.hash(name, capacity, location);
     }
 
     @Override

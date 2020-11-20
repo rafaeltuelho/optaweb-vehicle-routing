@@ -33,6 +33,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
@@ -41,27 +44,34 @@ import org.optaweb.vehiclerouting.domain.VehicleFactory;
 class VehicleRepositoryImplTest {
 
     @Mock
-    private VehicleCrudRepository crudRepository;
+    private VehicleCrudRepository vehicleCrudRepository;
+    @Mock
+    private LocationCrudRepository locationCrudRepository;
     @InjectMocks
     private VehicleRepositoryImpl repository;
     @Captor
     private ArgumentCaptor<VehicleEntity> vehicleEntityCaptor;
 
-    private final Vehicle testVehicle = VehicleFactory.createVehicle(19, "vehicle name", 1100);
+    private final Location testVehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+    private final Vehicle testVehicle = VehicleFactory.createVehicle(19, "vehicle name", 1100, testVehicleLocation);
 
     private static VehicleEntity vehicleEntity(Vehicle vehicle) {
-        return new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity());
+        LocationEntity locationEntity = new LocationEntity(
+            vehicle.location().id(), vehicle.location().type(), 
+            vehicle.location().coordinates().latitude(), vehicle.location().coordinates().longitude(), 
+            vehicle.location().description());
+        return new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity() , locationEntity);
     }
 
     @Test
-    void should_create_vehicle_and_generate_id_and_name() {
+    void should_create_vehicle_and_generate_id_name_and_location() {
         // arrange
         VehicleEntity newEntity = vehicleEntity(testVehicle);
-        when(crudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
-        int savedCapacity = 1;
+        when(vehicleCrudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
 
         // act
-        Vehicle newVehicle = repository.createVehicle(savedCapacity);
+        VehicleData savedVehicleData = VehicleFactory.vehicleData("Vehicle 1", 1, LocationFactory.testLocation(1, LocationType.VEHICLE));
+        Vehicle newVehicle = repository.createVehicleWithLocation(savedVehicleData);
 
         // assert
         // -- the correct values were used to save the entity
@@ -69,9 +79,11 @@ class VehicleRepositoryImplTest {
         assertThat(savedVehicles).hasSize(2);
 
         assertThat(savedVehicles.get(0).getName()).isNull();
-        assertThat(savedVehicles.get(0).getCapacity()).isEqualTo(savedCapacity);
+        assertThat(savedVehicles.get(0).getCapacity()).isEqualTo(savedVehicleData.capacity());
+        assertThat(savedVehicles.get(0).getLocation()).isEqualTo(savedVehicleData.location());
         assertThat(savedVehicles.get(1).getName()).isEqualTo("Vehicle " + newEntity.getId());
-        assertThat(savedVehicles.get(1).getCapacity()).isEqualTo(savedCapacity);
+        assertThat(savedVehicles.get(1).getCapacity()).isEqualTo(savedVehicleData.capacity());
+        assertThat(savedVehicles.get(1).getLocation()).isEqualTo(savedVehicleData.location());
 
         // -- created domain vehicle is equal to the entity returned by repository.save()
         // This may be confusing but that's the contract of Spring Repository API.
@@ -80,18 +92,19 @@ class VehicleRepositoryImplTest {
         assertThat(newVehicle.id()).isEqualTo(newEntity.getId());
         assertThat(newVehicle.name()).isEqualTo(newEntity.getName());
         assertThat(newVehicle.capacity()).isEqualTo(newEntity.getCapacity());
+        assertThat(newVehicle.location()).isEqualTo(newEntity.getLocation());
     }
 
     @Test
     void create_vehicle_from_given_data() {
         // arrange
         VehicleEntity newEntity = vehicleEntity(testVehicle);
-        when(crudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
+        when(vehicleCrudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
 
-        VehicleData vehicleData = VehicleFactory.vehicleData("x", 1);
+        VehicleData vehicleData = VehicleFactory.vehicleData("x", 1, LocationFactory.testLocation(1, LocationType.VEHICLE));
 
         // act
-        Vehicle newVehicle = repository.createVehicle(vehicleData);
+        Vehicle newVehicle = repository.createVehicleWithLocation(vehicleData);
 
         // assert
         // -- the correct values were used to save the entity
@@ -99,27 +112,31 @@ class VehicleRepositoryImplTest {
 
         assertThat(savedVehicle.getName()).isEqualTo(vehicleData.name());
         assertThat(savedVehicle.getCapacity()).isEqualTo(vehicleData.capacity());
+        assertThat(savedVehicle.getLocation()).isEqualTo(vehicleData.location());
 
         // -- created domain vehicle is equal to the entity returned by repository.save()
         assertThat(newVehicle.id()).isEqualTo(newEntity.getId());
         assertThat(newVehicle.name()).isEqualTo(newEntity.getName());
         assertThat(newVehicle.capacity()).isEqualTo(newEntity.getCapacity());
+        assertThat(newVehicle.location()).isEqualTo(newEntity.getLocation());
     }
 
     @Test
     void remove_created_vehicle_by_id() {
         VehicleEntity vehicleEntity = vehicleEntity(testVehicle);
         final long id = testVehicle.id();
-        when(crudRepository.findById(id)).thenReturn(Optional.of(vehicleEntity));
+        when(vehicleCrudRepository.findById(id)).thenReturn(Optional.of(vehicleEntity));
+
+        //FIX ME: must also remove the associated Location
 
         Vehicle removed = repository.removeVehicle(id);
         assertThat(removed).isEqualTo(testVehicle);
-        verify(crudRepository).deleteById(id);
+        verify(vehicleCrudRepository).deleteById(id);
     }
 
     @Test
     void removing_nonexistent_vehicle_should_fail() {
-        when(crudRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(vehicleCrudRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // removing nonexistent vehicle should fail and its ID should appear in the exception message
         int uniqueNonexistentId = 7173;
@@ -131,20 +148,20 @@ class VehicleRepositoryImplTest {
     @Test
     void remove_all_vehicles() {
         repository.removeAll();
-        verify(crudRepository).deleteAll();
+        verify(vehicleCrudRepository).deleteAll();
     }
 
     @Test
     void get_all_vehicles() {
         VehicleEntity vehicleEntity = vehicleEntity(testVehicle);
-        when(crudRepository.findAll()).thenReturn(Collections.singletonList(vehicleEntity));
+        when(vehicleCrudRepository.findAll()).thenReturn(Collections.singletonList(vehicleEntity));
         assertThat(repository.vehicles()).containsExactly(testVehicle);
     }
 
     @Test
     void find_by_id() {
         VehicleEntity vehicleEntity = vehicleEntity(testVehicle);
-        when(crudRepository.findById(testVehicle.id())).thenReturn(Optional.of(vehicleEntity));
+        when(vehicleCrudRepository.findById(testVehicle.id())).thenReturn(Optional.of(vehicleEntity));
         assertThat(repository.find(testVehicle.id())).contains(testVehicle);
     }
 
@@ -152,11 +169,12 @@ class VehicleRepositoryImplTest {
     void update() {
         repository.update(testVehicle);
 
-        verify(crudRepository).save(vehicleEntityCaptor.capture());
+        verify(vehicleCrudRepository).save(vehicleEntityCaptor.capture());
 
         VehicleEntity savedVehicle = vehicleEntityCaptor.getValue();
         assertThat(savedVehicle.getId()).isEqualTo(testVehicle.id());
         assertThat(savedVehicle.getName()).isEqualTo(testVehicle.name());
         assertThat(savedVehicle.getCapacity()).isEqualTo(testVehicle.capacity());
+        assertThat(savedVehicle.getLocation()).isEqualTo(testVehicle.location());
     }
 }

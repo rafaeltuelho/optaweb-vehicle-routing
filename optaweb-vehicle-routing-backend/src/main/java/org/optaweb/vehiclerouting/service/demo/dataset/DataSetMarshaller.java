@@ -24,7 +24,9 @@ import java.util.Collections;
 import java.util.Optional;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
+import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.LocationData;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
@@ -99,7 +101,9 @@ public class DataSetMarshaller {
     static DataSet toDataSet(RoutingProblem routingProblem) {
         DataSet dataSet = new DataSet();
         dataSet.setName(routingProblem.name());
-        dataSet.setDepot(routingProblem.depot().map(DataSetMarshaller::toDataSet).orElse(null));
+        dataSet.setDepots(routingProblem.depots().stream()
+                .map(DataSetMarshaller::toDataSet)
+                .collect(toList()));
         dataSet.setVehicles(routingProblem.vehicles().stream()
                 .map(DataSetMarshaller::toDataSet)
                 .collect(toList()));
@@ -118,7 +122,7 @@ public class DataSetMarshaller {
     }
 
     static DataSetVehicle toDataSet(VehicleData vehicleData) {
-        return new DataSetVehicle(vehicleData.name(), vehicleData.capacity());
+        return new DataSetVehicle(vehicleData.name(), vehicleData.capacity(), toDataSet(vehicleData.location()));
     }
 
     static RoutingProblem toDomain(DataSet dataSet) {
@@ -128,7 +132,10 @@ public class DataSetMarshaller {
                         .stream()
                         .map(DataSetMarshaller::toDomain)
                         .collect(toList()),
-                Optional.ofNullable(dataSet.getDepot()).map(DataSetMarshaller::toDomain).orElse(null),
+                Optional.ofNullable(dataSet.getDepots()).orElse(Collections.emptyList())
+                        .stream()
+                        .map(DataSetMarshaller::toDomain)
+                        .collect(toList()),
                 Optional.ofNullable(dataSet.getVisits()).orElse(Collections.emptyList())
                         .stream()
                         .map(DataSetMarshaller::toDomain)
@@ -136,13 +143,18 @@ public class DataSetMarshaller {
     }
 
     static LocationData toDomain(DataSetLocation dataSetLocation) {
-        return new LocationData(
-                dataSetLocation.getType(),
-                Coordinates.valueOf(dataSetLocation.getLatitude(), dataSetLocation.getLongitude()),
-                dataSetLocation.getLabel());
+        return LocationFactory.locationData(dataSetLocation.getType(),
+                    dataSetLocation.getLatitude(), dataSetLocation.getLongitude(),
+                    dataSetLocation.getLabel());
+    }
+
+    static Location toDomainLocation(DataSetLocation dataSetLocation) {
+        return  LocationFactory.createLocation(0L, dataSetLocation.getType(), 
+                    Coordinates.valueOf(dataSetLocation.getLatitude(), dataSetLocation.getLongitude()), 
+                    dataSetLocation.getLabel()); 
     }
 
     static VehicleData toDomain(DataSetVehicle dataSetVehicle) {
-        return VehicleFactory.vehicleData(dataSetVehicle.name, dataSetVehicle.capacity);
+        return VehicleFactory.vehicleData(dataSetVehicle.name, dataSetVehicle.capacity, toDomainLocation(dataSetVehicle.location));
     }
 }

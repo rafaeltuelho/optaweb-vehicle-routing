@@ -28,7 +28,7 @@ public class RoutingProblem {
 
     private final String name;
     private final List<VehicleData> vehicles;
-    private final LocationData depot;
+    private final List<LocationData> depots;
     private final List<LocationData> visits;
 
     /**
@@ -42,11 +42,11 @@ public class RoutingProblem {
     public RoutingProblem(
             String name,
             List<? extends VehicleData> vehicles,
-            LocationData depot,
+            List<? extends LocationData> depots,
             List<? extends LocationData> visits) {
         this.name = Objects.requireNonNull(name);
         this.vehicles = new ArrayList<>(Objects.requireNonNull(vehicles));
-        this.depot = depot;
+        this.depots = new ArrayList<>(Objects.requireNonNull(depots));
         this.visits = new ArrayList<>(Objects.requireNonNull(visits));
     }
 
@@ -64,8 +64,8 @@ public class RoutingProblem {
      *
      * @return depot (never {@code null})
      */
-    public Optional<LocationData> depot() {
-        return Optional.ofNullable(depot);
+    public List<LocationData> depots() {
+        return depots;
     }
 
     /**

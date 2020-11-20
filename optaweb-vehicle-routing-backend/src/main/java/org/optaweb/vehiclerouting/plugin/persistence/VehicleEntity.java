@@ -16,10 +16,14 @@
 
 package org.optaweb.vehiclerouting.plugin.persistence;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 /**
  * Persistable vehicle.
@@ -32,15 +36,26 @@ public class VehicleEntity {
     private long id;
     private String name;
     private int capacity;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LOCATION_ID")
+    private LocationEntity location;
 
     protected VehicleEntity() {
         // for JPA
     }
 
-    public VehicleEntity(long id, String name, int capacity) {
+    //Vehicle must have a Location from now on
+    // public VehicleEntity(long id, String name, int capacity) {
+    //     this.id = id;
+    //     this.name = name;
+    //     this.capacity = capacity;
+    // }
+
+    public VehicleEntity(long id, String name, int capacity, LocationEntity location) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
+        this.location = location;
     }
 
     public long getId() {
@@ -55,12 +70,22 @@ public class VehicleEntity {
         return capacity;
     }
 
+	public LocationEntity getLocation() {
+		return location;
+	}
+
+	public void setLocation(LocationEntity location) {
+		this.location = location;
+	}
+
     @Override
     public String toString() {
         return "VehicleEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +
+                ", location=" + location + 
                 '}';
     }
+
 }

@@ -73,13 +73,15 @@ public class RouteListener implements ApplicationListener<RouteChangedEvent> {
     @Override
     public void onApplicationEvent(RouteChangedEvent event) {
         // TODO persist the best solution
-        Location depot = event.depotId().flatMap(locationRepository::find).orElse(null);
+        // Location depot = event.depotId().flatMap(locationRepository::find).orElse(null);
         try {
             // TODO Introduce problem revision (every modification increases revision number, event will only
             //  be published if revision numbers match) to avoid looking for missing/extra vehicles/visits.
             //  This will also make it possible to get rid of the try-catch approach.
             Map<Long, Vehicle> vehicleMap = event.vehicleIds().stream()
                     .collect(toMap(vehicleId -> vehicleId, this::findVehicleById));
+            Map<Long, Location> depotMap = event.depotIds().stream()
+                    .collect(toMap(visitId -> visitId, this::findLocationById));
             Map<Long, Location> visitMap = event.visitIds().stream()
                     .collect(toMap(visitId -> visitId, this::findLocationById));
 
@@ -88,16 +90,14 @@ public class RouteListener implements ApplicationListener<RouteChangedEvent> {
                     .map(shallowRoute -> new Route(
                             vehicleMap.get(shallowRoute.vehicleId),
                             findLocationById(shallowRoute.depotId),
-                            shallowRoute.visitIds.stream()
-                                    .map(visitMap::get)
-                                    .collect(toList())))
+                            shallowRoute.visitIds.stream().map(visitMap::get).collect(toList())))
                     // add tracks
                     .map(route -> new RouteWithTrack(route, track(route.depot(), route.visits())))
                     .collect(toList());
             bestRoutingPlan = new RoutingPlan(
                     event.distance(),
                     new ArrayList<>(vehicleMap.values()),
-                    depot,
+                    new ArrayList<>(depotMap.values()),
                     new ArrayList<>(visitMap.values()),
                     routes);
             routingPlanConsumer.consumePlan(bestRoutingPlan);

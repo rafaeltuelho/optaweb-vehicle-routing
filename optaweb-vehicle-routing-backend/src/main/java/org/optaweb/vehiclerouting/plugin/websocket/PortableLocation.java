@@ -19,7 +19,9 @@ package org.optaweb.vehiclerouting.plugin.websocket;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
 import org.optaweb.vehiclerouting.domain.LocationType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,7 +42,7 @@ class PortableLocation {
 
     private final String description;
 
-    static PortableLocation fromLocation(Location location) {
+    static PortableLocation fromDomainLocation(Location location) {
         Objects.requireNonNull(location, "location must not be null");
         return new PortableLocation(
                 location.id(),
@@ -48,6 +50,15 @@ class PortableLocation {
                 location.coordinates().latitude(),
                 location.coordinates().longitude(),
                 location.description());
+    }
+
+    static Location toDomainLocation(PortableLocation portableLocation) {
+        Objects.requireNonNull(portableLocation, "portable location must not be null");
+        return LocationFactory.createLocation(
+            portableLocation.getId(),
+            portableLocation.getType(),
+            new Coordinates(portableLocation.getLatitude(), portableLocation.getLongitude()),
+            portableLocation.getDescription());
     }
 
     @JsonCreator
