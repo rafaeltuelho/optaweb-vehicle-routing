@@ -156,7 +156,7 @@ class WebSocketController {
     @MessageMapping("vehicle")
     void addVehicle(PortableVehicle request) {
         VehicleData vehicleData = VehicleFactory.vehicleData(
-            request.getName(), request.getCapacity(), PortableLocation.toDomainLocation(request.getLocation()));
+                request.getName(), request.getCapacity(), PortableLocation.toDomainLocation(request.getLocation()));
         vehicleService.createVehicleWithLocation(vehicleData);
     }
 

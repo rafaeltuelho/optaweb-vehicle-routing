@@ -55,20 +55,23 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
     @Override
     public Vehicle createVehicleWithLocation(VehicleData vehicleData) {
-        Optional<LocationEntity> locationEntity = locationRepository.findById(vehicleData.location().id());
-       if (!locationEntity.isPresent()) {
-           //TODO: create the vehicle location or thow an IllegalArgumentException?
-           logger.warn("Vehicle location {} does not exist yet.", vehicleData.location());
-           Location domainVehicleLocation = vehicleData.location();
-           LocationEntity vehiclelocationEntity = new LocationEntity(
-            domainVehicleLocation.id(), domainVehicleLocation.type(), 
-            domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(), 
-            domainVehicleLocation.description());
-            locationEntity = Optional.of(locationRepository.save(vehiclelocationEntity));
-            logger.info("Created vehicle location {}.", vehiclelocationEntity);
-        }
-    
-        VehicleEntity vehicleEntity = repository.save(new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity(), locationEntity.get()));
+        // Optional<LocationEntity> locationEntity = locationRepository.findById(vehicleData.location().id());
+        // if (!locationEntity.isPresent()) {
+        //     //TODO: create the vehicle location or thow an IllegalArgumentException?
+        //     logger.warn("Vehicle location {} does not exist yet.", vehicleData.location());
+            Location domainVehicleLocation = vehicleData.location();
+            LocationEntity vehiclelocationEntity = new LocationEntity(
+                    0L, domainVehicleLocation.type(),
+                    domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(),
+                    domainVehicleLocation.description());
+        //     locationEntity = Optional.of(locationRepository.save(vehiclelocationEntity));
+        //     logger.info("Created vehicle location {}.", vehiclelocationEntity);
+        // }
+        // VehicleEntity vehicleEntity = new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity());
+        // vehicleEntity.setLocation(vehiclelocationEntity);
+
+        VehicleEntity vehicleEntity =
+                repository.save(new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity(), vehiclelocationEntity));
         Vehicle vehicle = toDomain(vehicleEntity);
         logger.info("Created vehicle {}.", vehicle);
         return vehicle;
@@ -105,16 +108,22 @@ public class VehicleRepositoryImpl implements VehicleRepository {
     @Override
     public void update(Vehicle vehicle) {
         //FIX ME: not sure if this is allowed by design?!
-        Optional<LocationEntity> locationEntity = locationRepository.findById(vehicle.location().id());
-        repository.save(new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), locationEntity.get()));
+        // Optional<LocationEntity> locationEntity = locationRepository.findById(vehicle.location().id());
+        Location domainVehicleLocation = vehicle.location();
+        LocationEntity vehiclelocationEntity = new LocationEntity(
+            0L, domainVehicleLocation.type(),
+            domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(),
+            domainVehicleLocation.description());
+
+        repository.save(new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), vehiclelocationEntity));
     }
 
     private static Vehicle toDomain(VehicleEntity vehicleEntity) {
         Location location = new Location(
-            vehicleEntity.getLocation().getId(),
-            vehicleEntity.getLocation().getype(),
-            new Coordinates(vehicleEntity.getLocation().getLatitude(), vehicleEntity.getLocation().getLongitude()),
-            vehicleEntity.getLocation().getDescription());
+                vehicleEntity.getLocation().getId(),
+                vehicleEntity.getLocation().getype(),
+                new Coordinates(vehicleEntity.getLocation().getLatitude(), vehicleEntity.getLocation().getLongitude()),
+                vehicleEntity.getLocation().getDescription());
 
         return VehicleFactory.createVehicle(
                 vehicleEntity.getId(),

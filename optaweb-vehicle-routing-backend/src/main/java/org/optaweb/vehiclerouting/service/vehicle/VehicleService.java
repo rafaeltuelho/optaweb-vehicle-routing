@@ -21,7 +21,6 @@ import static java.util.Comparator.comparingLong;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
@@ -40,7 +39,8 @@ public class VehicleService {
     private final LocationRepository locationRepository;
 
     @Autowired
-    public VehicleService(RouteOptimizer optimizer, VehicleRepository vehicleRepository, LocationRepository locationRepository) {
+    public VehicleService(RouteOptimizer optimizer, VehicleRepository vehicleRepository,
+            LocationRepository locationRepository) {
         this.optimizer = optimizer;
         this.vehicleRepository = vehicleRepository;
         this.locationRepository = locationRepository;
@@ -56,11 +56,11 @@ public class VehicleService {
         Vehicle vehicle = null;
         // Optional<Location> location = locationRepository.find(vehicleData.locationData().id());
         // if (!location.isPresent()) {
-            // Location vehicleLocation = locationRepository.createLocation(
-            //     vehicleData.location().type(), vehicleData.location().coordinates(), vehicleData.location().description());
-            vehicle = vehicleRepository.createVehicleWithLocation(
+        // Location vehicleLocation = locationRepository.createLocation(
+        //     vehicleData.location().type(), vehicleData.location().coordinates(), vehicleData.location().description());
+        vehicle = vehicleRepository.createVehicleWithLocation(
                 VehicleFactory.vehicleData(vehicleData.name(), vehicleData.capacity(), vehicleData.location()));
-            // vehicleRepository.update(vehicle);
+        // vehicleRepository.update(vehicle);
         // }
         // else {
         //     vehicle = vehicleRepository.createVehicle(vehicleData);
@@ -93,7 +93,7 @@ public class VehicleService {
 
     public void changeCapacity(long vehicleId, int capacity) {
         Vehicle vehicle = vehicleRepository.find(vehicleId).orElseThrow(
-            () -> new IllegalArgumentException("Can't remove Vehicle{id=" + vehicleId + "} because it doesn't exist"));
+                () -> new IllegalArgumentException("Can't remove Vehicle{id=" + vehicleId + "} because it doesn't exist"));
         Vehicle updatedVehicle = VehicleFactory.createVehicle(vehicle.id(), vehicle.name(), capacity, vehicle.location());
         vehicleRepository.update(updatedVehicle);
         optimizer.changeCapacity(updatedVehicle);

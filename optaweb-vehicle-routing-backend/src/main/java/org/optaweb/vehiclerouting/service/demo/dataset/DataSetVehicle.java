@@ -32,7 +32,8 @@ public class DataSetVehicle {
     final DataSetLocation location;
 
     @JsonCreator
-    public DataSetVehicle(@JsonProperty("name") String name, @JsonProperty("capacity") int capacity, @JsonProperty("location") DataSetLocation location) {
+    public DataSetVehicle(@JsonProperty("name") String name, @JsonProperty("capacity") int capacity,
+            @JsonProperty("location") DataSetLocation location) {
         this.name = name;
         this.capacity = capacity;
         this.location = location;

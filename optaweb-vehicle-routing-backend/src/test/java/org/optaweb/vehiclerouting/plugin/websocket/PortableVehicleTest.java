@@ -46,7 +46,8 @@ class PortableVehicleTest {
         long id = 321;
         String name = "Pink: {XY-123} \"B\"";
         int capacity = 78;
-        PortableLocation portableVehicleLocation = new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
+        PortableLocation portableVehicleLocation =
+                new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
         PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation);
         String jsonTemplate = "{\"id\":%d,\"name\":\"%s\",\"capacity\":%d}";
         assertThat(json.write(portableVehicle)).isEqualToJson(
@@ -55,7 +56,8 @@ class PortableVehicleTest {
 
     @Test
     void constructor_params_must_not_be_null() {
-        PortableLocation portableVehicleLocation = new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
+        PortableLocation portableVehicleLocation =
+                new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
 
         assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, null, 2, portableVehicleLocation));
         assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, "test", 2, null));
@@ -67,7 +69,8 @@ class PortableVehicleTest {
         String name = "Pink XY-123 B";
         int capacity = 31;
         Location domainLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
-        PortableVehicle portableVehicle = PortableVehicle.fromVehicle(VehicleFactory.createVehicle(id, name, capacity, domainLocation));
+        PortableVehicle portableVehicle =
+                PortableVehicle.fromVehicle(VehicleFactory.createVehicle(id, name, capacity, domainLocation));
         assertThat(portableVehicle.getId()).isEqualTo(id);
         assertThat(portableVehicle.getName()).isEqualTo(name);
         assertThat(portableVehicle.getCapacity()).isEqualTo(capacity);
@@ -83,7 +86,8 @@ class PortableVehicleTest {
         String name = "x y";
         int capacity = 444111;
         Location domainLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
-        PortableLocation portableVehicleLocation = new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
+        PortableLocation portableVehicleLocation =
+                new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
         PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation);
 
         assertThat(portableVehicle)

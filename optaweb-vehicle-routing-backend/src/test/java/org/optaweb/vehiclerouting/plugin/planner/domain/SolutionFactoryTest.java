@@ -40,6 +40,7 @@ class SolutionFactoryTest {
 
         PlanningLocation depotLocation = PlanningLocationFactory.testLocation(1);
         PlanningDepot depot = new PlanningDepot(depotLocation);
+        vehicle.setDepot(depot);
 
         PlanningVisit visit = PlanningVisitFactory.testVisit(2);
 
@@ -56,7 +57,7 @@ class SolutionFactoryTest {
 
         VehicleRoutingSolution solutionWithNoDepot = SolutionFactory.solutionFromVisits(
                 singletonList(vehicle),
-                null,
+                emptyList(),
                 emptyList());
         assertThat(solutionWithNoDepot.getDepotList()).isEmpty();
     }

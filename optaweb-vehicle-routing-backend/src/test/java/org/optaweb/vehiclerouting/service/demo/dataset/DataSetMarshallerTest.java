@@ -36,6 +36,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.optaweb.vehiclerouting.domain.Coordinates;
+import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.LocationData;
 import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
@@ -57,11 +58,9 @@ class DataSetMarshallerTest {
         assertThat(dataSet).isNotNull();
 
         assertThat(dataSet.getName()).isEqualTo("Belgium test");
-        assertThat(dataSet.getDepot()).isNotNull();
-        assertThat(dataSet.getDepot().getLabel()).isEqualTo("Brussels");
-        assertThat(dataSet.getDepot().getType()).isEqualTo(LocationType.DEPOT);
-        assertThat(dataSet.getDepot().getLatitude()).isEqualTo(50.85);
-        assertThat(dataSet.getDepot().getLongitude()).isEqualTo(4.35);
+        assertThat(dataSet.getDepots())
+                .extracting("label")
+                .containsExactlyInAnyOrder("Brussels", "Nazareth");
         assertThat(dataSet.getVisits())
                 .extracting("label")
                 .containsExactlyInAnyOrder("Aalst", "Châtelet", "La Louvière", "Sint-Niklaas", "Ypres");
@@ -78,20 +77,22 @@ class DataSetMarshallerTest {
         DataSet dataSet = new DataSet();
         String name = "Test data set";
         dataSet.setName(name);
-        DataSetLocation depot = new DataSetLocation(LocationType.DEPOT, "Depot", -1.1, -9.9);
+        DataSetLocation depot1 = new DataSetLocation(LocationType.DEPOT, "Depot 1", -1.1, -9.9);
+        DataSetLocation depot2 = new DataSetLocation(LocationType.DEPOT, "Depot 2", -2.2, -2.22);
         DataSetLocation location1 = new DataSetLocation(LocationType.VISIT, "Location 1", 1.0, 0.1);
         DataSetLocation location2 = new DataSetLocation(LocationType.VISIT, "Location 2", 2.0, 0.2);
-        dataSet.setDepot(depot);
+        dataSet.setDepots(Arrays.asList(depot1, depot2));
         dataSet.setVisits(Arrays.asList(location1, location2));
-        DataSetVehicle vehicle1 = new DataSetVehicle("Vehicle 1", 123);
-        DataSetVehicle vehicle2 = new DataSetVehicle("Vehicle 2", 222);
+        DataSetVehicle vehicle1 = new DataSetVehicle("Vehicle 1", 123, depot1);
+        DataSetVehicle vehicle2 = new DataSetVehicle("Vehicle 2", 222, depot2);
         dataSet.setVehicles(Arrays.asList(vehicle1, vehicle2));
 
         String yaml = new DataSetMarshaller().marshal(dataSet);
         assertThat(yaml)
                 .contains("name: \"" + name)
                 .contains(
-                        depot.getLabel(),
+                        depot1.getLabel(),
+                        depot2.getLabel(),
                         location1.getLabel(),
                         location2.getLabel(),
                         vehicle1.name,
@@ -134,19 +135,21 @@ class DataSetMarshallerTest {
 
     @Test
     void routing_problem_conversion() {
-        VehicleData vehicle = VehicleFactory.vehicleData("vehicle", 10);
+        Location vehicleLocation = new Location(0, LocationType.VEHICLE, Coordinates.valueOf(62.56, 7.49), "v8");
+        VehicleData vehicle = VehicleFactory.vehicleData("vehicle", 10, vehicleLocation);
         List<VehicleData> vehicles = Arrays.asList(vehicle);
         LocationData depot = new LocationData(LocationType.DEPOT, Coordinates.valueOf(60.1, 5.78), "Depot");
+        List<LocationData> depots = Arrays.asList(depot);
         LocationData visit = new LocationData(LocationType.VISIT, Coordinates.valueOf(1.06, 8.75), "Visit");
         List<LocationData> visits = Arrays.asList(visit);
         String name = "some data set";
 
         // domain -> data set
-        DataSet dataSet = toDataSet(new RoutingProblem(name, vehicles, depot, visits));
+        DataSet dataSet = toDataSet(new RoutingProblem(name, vehicles, depots, visits));
         assertThat(dataSet.getName()).isEqualTo(name);
         assertThat(dataSet.getVehicles()).hasSameSizeAs(vehicles);
         assertThat(toDomain(dataSet.getVehicles().get(0))).isEqualTo(vehicle);
-        assertThat(toDomain(dataSet.getDepot())).isEqualTo(depot);
+        assertThat(dataSet.getDepots()).hasSameSizeAs(depots);
         assertThat(dataSet.getVisits()).hasSameSizeAs(visits);
         assertThat(toDomain(dataSet.getVisits().get(0))).isEqualTo(visit);
 
@@ -154,7 +157,7 @@ class DataSetMarshallerTest {
         RoutingProblem routingProblem = toDomain(dataSet);
         assertThat(routingProblem.name()).isEqualTo(name);
         assertThat(routingProblem.vehicles()).containsExactly(vehicle);
-        assertThat(routingProblem.depot()).contains(depot);
+        assertThat(routingProblem.depots()).containsExactly(depot);
         assertThat(routingProblem.visits()).containsExactly(visit);
     }
 
@@ -163,7 +166,7 @@ class DataSetMarshallerTest {
         DataSet emptyDataSet = new DataSet();
         RoutingProblem routingProblem = toDomain(emptyDataSet);
         assertThat(routingProblem.name()).isEmpty();
-        assertThat(routingProblem.depot()).isEmpty();
+        assertThat(routingProblem.depots()).isEmpty();
         assertThat(routingProblem.vehicles()).isEmpty();
         assertThat(routingProblem.visits()).isEmpty();
     }

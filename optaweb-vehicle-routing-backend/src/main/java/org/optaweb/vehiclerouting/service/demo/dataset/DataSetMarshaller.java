@@ -144,17 +144,18 @@ public class DataSetMarshaller {
 
     static LocationData toDomain(DataSetLocation dataSetLocation) {
         return LocationFactory.locationData(dataSetLocation.getType(),
-                    dataSetLocation.getLatitude(), dataSetLocation.getLongitude(),
-                    dataSetLocation.getLabel());
+                dataSetLocation.getLatitude(), dataSetLocation.getLongitude(),
+                dataSetLocation.getLabel());
     }
 
     static Location toDomainLocation(DataSetLocation dataSetLocation) {
-        return  LocationFactory.createLocation(0L, dataSetLocation.getType(), 
-                    Coordinates.valueOf(dataSetLocation.getLatitude(), dataSetLocation.getLongitude()), 
-                    dataSetLocation.getLabel()); 
+        return LocationFactory.createLocation(0L, dataSetLocation.getType(),
+                Coordinates.valueOf(dataSetLocation.getLatitude(), dataSetLocation.getLongitude()),
+                dataSetLocation.getLabel());
     }
 
     static VehicleData toDomain(DataSetVehicle dataSetVehicle) {
-        return VehicleFactory.vehicleData(dataSetVehicle.name, dataSetVehicle.capacity, toDomainLocation(dataSetVehicle.location));
+        return VehicleFactory.vehicleData(dataSetVehicle.name, dataSetVehicle.capacity,
+                toDomainLocation(dataSetVehicle.location));
     }
 }

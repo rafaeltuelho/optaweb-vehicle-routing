@@ -62,6 +62,7 @@ class PortableRoutingPlanFactoryTest {
         final Location vehicleLocation1 = new Location(1, LocationType.VEHICLE, coordinates1);
         final Location vehicleLocation2 = new Location(2, LocationType.VEHICLE, coordinates2);
         final Location depotLocation1 = new Location(1, LocationType.DEPOT, coordinates1);
+        final Location depotLocation2 = new Location(2, LocationType.DEPOT, coordinates2);
         final Location location1 = new Location(1, LocationType.VISIT, coordinates1);
         final Location location2 = new Location(2, LocationType.VISIT, coordinates2);
         final Location location3 = new Location(3, LocationType.VISIT, coordinates3);
@@ -71,10 +72,10 @@ class PortableRoutingPlanFactoryTest {
         final Vehicle vehicle2 = VehicleFactory.createVehicle(2, "Vehicle 2", 200, vehicleLocation2);
 
         RouteWithTrack route1 = new RouteWithTrack(
-                new Route(vehicle1, location1, singletonList(location2)),
+                new Route(vehicle1, depotLocation1, singletonList(location2)),
                 asList(segment12, segment21));
         RouteWithTrack route2 = new RouteWithTrack(
-                new Route(vehicle2, location1, singletonList(location3)),
+                new Route(vehicle2, depotLocation2, singletonList(location3)),
                 asList(segment13, segment31));
 
         RoutingPlan routingPlan = new RoutingPlan(
@@ -107,7 +108,7 @@ class PortableRoutingPlanFactoryTest {
         PortableRoute portableRoute1 = portableRoutingPlan.getRoutes().get(0);
 
         assertThat(portableRoute1.getVehicle()).isEqualTo(PortableVehicle.fromVehicle(vehicle1));
-        assertThat(portableRoute1.getDepot()).isEqualTo(PortableLocation.fromDomainLocation(location1));
+        assertThat(portableRoute1.getDepot()).isEqualTo(PortableLocation.fromDomainLocation(depotLocation1));
         assertThat(portableRoute1.getVisits()).containsExactly(
                 PortableLocation.fromDomainLocation(location2));
         assertThat(portableRoute1.getTrack()).hasSize(2);
@@ -124,7 +125,7 @@ class PortableRoutingPlanFactoryTest {
         PortableRoute portableRoute2 = portableRoutingPlan.getRoutes().get(1);
 
         assertThat(portableRoute2.getVehicle()).isEqualTo(PortableVehicle.fromVehicle(vehicle2));
-        assertThat(portableRoute2.getDepot()).isEqualTo(PortableLocation.fromDomainLocation(depotLocation1));
+        assertThat(portableRoute2.getDepot()).isEqualTo(PortableLocation.fromDomainLocation(depotLocation2));
         assertThat(portableRoute2.getVisits()).containsExactly(
                 PortableLocation.fromDomainLocation(location3));
         assertThat(portableRoute2.getTrack()).hasSize(2);

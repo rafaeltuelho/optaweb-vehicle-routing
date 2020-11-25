@@ -39,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Distance;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
 import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.RouteWithTrack;
 import org.optaweb.vehiclerouting.domain.RoutingPlan;
@@ -77,7 +78,7 @@ class RouteListenerTest {
                 this,
                 Distance.ZERO,
                 singletonList(vehicleId),
-                null,
+                emptyList(),
                 emptyList(),
                 emptyList());
         routeListener.onApplicationEvent(event);
@@ -85,7 +86,7 @@ class RouteListenerTest {
 
         RoutingPlan routingPlan = verifyAndCaptureConsumedPlan();
         assertThat(routingPlan.vehicles()).containsExactly(vehicle);
-        assertThat(routingPlan.depot()).isEmpty();
+        assertThat(routingPlan.depots()).isEmpty();
         assertThat(routingPlan.visits()).isEmpty();
         assertThat(routingPlan.routes()).isEmpty();
     }
@@ -94,6 +95,7 @@ class RouteListenerTest {
     void event_with_no_visits_and_a_depot_should_be_consumed_as_plan_with_empty_routes() {
         final Coordinates depotCoordinates = Coordinates.valueOf(0.0, 0.1);
         final Location depot = new Location(1, LocationType.DEPOT, depotCoordinates);
+        // final Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
         final long vehicleId = 448;
         final Vehicle vehicle = VehicleFactory.testVehicle(vehicleId);
         ShallowRoute route = new ShallowRoute(vehicle.id(), depot.id(), emptyList());
@@ -104,7 +106,7 @@ class RouteListenerTest {
                 this,
                 Distance.ofMillis(5000),
                 singletonList(vehicleId),
-                depot.id(),
+                singletonList(depot.id()),
                 emptyList(),
                 singletonList(route));
         routeListener.onApplicationEvent(event);
@@ -113,7 +115,7 @@ class RouteListenerTest {
 
         RoutingPlan routingPlan = verifyAndCaptureConsumedPlan();
         assertThat(routingPlan.vehicles()).containsExactly(vehicle);
-        assertThat(routingPlan.depot()).contains(depot);
+        assertThat(routingPlan.depots()).contains(depot);
         assertThat(routingPlan.visits()).isEmpty();
         assertThat(routingPlan.routes()).hasSize(1);
         RouteWithTrack routeWithTrack = routingPlan.routes().iterator().next();
@@ -148,7 +150,7 @@ class RouteListenerTest {
                 this,
                 distance,
                 singletonList(vehicleId),
-                depot.id(),
+                singletonList(depot.id()),
                 singletonList(visit.id()),
                 singletonList(route));
 
@@ -157,7 +159,7 @@ class RouteListenerTest {
         RoutingPlan routingPlan = verifyAndCaptureConsumedPlan();
         assertThat(routingPlan.distance()).isEqualTo(distance);
         assertThat(routingPlan.vehicles()).containsExactly(vehicle);
-        assertThat(routingPlan.depot()).contains(depot);
+        assertThat(routingPlan.depots()).contains(depot);
         assertThat(routingPlan.visits()).containsExactly(visit);
         assertThat(routingPlan.routes()).hasSize(1);
         RouteWithTrack routeWithTrack = routingPlan.routes().iterator().next();
@@ -183,7 +185,7 @@ class RouteListenerTest {
                 this,
                 Distance.ofMillis(1),
                 singletonList(vehicle.id()),
-                depot.id(),
+                singletonList(depot.id()),
                 singletonList(visit.id()),
                 singletonList(route));
 
@@ -205,14 +207,14 @@ class RouteListenerTest {
         final Location depot = new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 2.0));
         final Location visit = new Location(2, LocationType.VISIT, Coordinates.valueOf(-1.0, -2.0));
         when(vehicleRepository.find(vehicle.id())).thenReturn(Optional.empty());
-        when(locationRepository.find(depot.id())).thenReturn(Optional.of(depot));
+        // when(locationRepository.find(depot.id())).thenReturn(Optional.of(depot));
 
         ShallowRoute route = new ShallowRoute(vehicle.id(), depot.id(), singletonList(visit.id()));
         RouteChangedEvent event = new RouteChangedEvent(
                 this,
                 Distance.ofMillis(1),
                 singletonList(vehicle.id()),
-                depot.id(),
+                singletonList(depot.id()),
                 singletonList(visit.id()),
                 singletonList(route));
 

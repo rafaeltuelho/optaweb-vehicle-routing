@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.optaweb.vehiclerouting.domain.Coordinates;
 import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
 import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.RoutingProblem;
 import org.optaweb.vehiclerouting.domain.Vehicle;
@@ -72,12 +73,13 @@ class DemoServiceTest {
 
     private final String problemName = "Testing problem";
     private final List<VehicleData> vehicles = Arrays.asList(
-            VehicleFactory.vehicleData("v1", 10),
-            VehicleFactory.vehicleData("v2", 10));
-    private final Location depot = new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 7), "Depot");
+            VehicleFactory.vehicleData("v1", 10, LocationFactory.testLocation(1, LocationType.VEHICLE)),
+            VehicleFactory.vehicleData("v2", 10, LocationFactory.testLocation(2, LocationType.VEHICLE)));
+    private final List<Location> depots =
+            Arrays.asList(new Location(1, LocationType.DEPOT, Coordinates.valueOf(1.0, 7), "Depot"));
     private final List<Location> visits =
             Arrays.asList(new Location(2, LocationType.VISIT, Coordinates.valueOf(2.0, 9), "Visit"));
-    private final RoutingProblem routingProblem = new RoutingProblem(problemName, vehicles, depot, visits);
+    private final RoutingProblem routingProblem = new RoutingProblem(problemName, vehicles, depots, visits);
 
     @Test
     void demos_should_return_routing_problems() {
@@ -100,7 +102,7 @@ class DemoServiceTest {
         verify(locationService, times(routingProblem.visits().size() + 1))
                 .createLocation(any(LocationType.class), any(Coordinates.class), anyString());
         verify(vehicleService, times(routingProblem.vehicles().size()))
-                .createVehicle(any(VehicleData.class));
+                .createVehicleWithLocation(any(VehicleData.class));
     }
 
     @Test
@@ -109,26 +111,27 @@ class DemoServiceTest {
         when(locationService.createLocation(any(LocationType.class), any(Coordinates.class), anyString())).thenReturn(false);
         assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> demoService.loadDemo(problemName))
-                .withMessageContaining(depot.coordinates().toString());
+                .withMessageContaining(depots.get(0).coordinates().toString());
         verify(locationService, times(DemoService.MAX_TRIES)).createLocation(any(LocationType.class), any(Coordinates.class),
                 anyString());
     }
 
     @Test
     void export_should_marshal_routing_plans_with_locations_and_vehicles_from_repository() {
-        Location depot = new Location(0, LocationType.DEPOT, Coordinates.valueOf(1.0, 2.0), "Depot");
+        Location depot1 = new Location(0, LocationType.DEPOT, Coordinates.valueOf(1.0, 2.0), "Depot 1");
+        Location depot2 = new Location(0, LocationType.DEPOT, Coordinates.valueOf(1.0, 2.0), "Depot 2");
         Location visit1 = new Location(1, LocationType.VISIT, Coordinates.valueOf(11.0, 22.0), "Visit 1");
         Location visit2 = new Location(2, LocationType.VISIT, Coordinates.valueOf(22.0, 33.0), "Visit 2");
-        Vehicle vehicle1 = VehicleFactory.createVehicle(11, "Vehicle 1", 100);
-        Vehicle vehicle2 = VehicleFactory.createVehicle(12, "Vehicle 2", 200);
-        when(locationRepository.locations()).thenReturn(Arrays.asList(depot, visit1, visit2));
+        Vehicle vehicle1 = VehicleFactory.createVehicle(11, "Vehicle 1", 100, depot1);
+        Vehicle vehicle2 = VehicleFactory.createVehicle(12, "Vehicle 2", 200, depot2);
+        when(locationRepository.locations()).thenReturn(Arrays.asList(depot1, depot2, visit1, visit2));
         when(vehicleRepository.vehicles()).thenReturn(Arrays.asList(vehicle1, vehicle2));
 
         demoService.exportDataSet();
 
         RoutingProblem routingProblem = verifyAndCaptureMarshalledProblem();
         assertThat(routingProblem.name()).isNotNull();
-        assertThat(routingProblem.depot()).contains(depot);
+        assertThat(routingProblem.depots()).containsExactly(depot1, depot2);
         assertThat(routingProblem.visits()).containsExactly(visit1, visit2);
         assertThat(routingProblem.vehicles()).containsExactly(vehicle1, vehicle2);
     }
@@ -142,7 +145,7 @@ class DemoServiceTest {
 
         RoutingProblem routingProblem = verifyAndCaptureMarshalledProblem();
         assertThat(routingProblem.name()).isNotNull();
-        assertThat(routingProblem.depot()).isEmpty();
+        assertThat(routingProblem.depots()).isEmpty();
         assertThat(routingProblem.visits()).isEmpty();
         assertThat(routingProblem.vehicles()).isEmpty();
     }

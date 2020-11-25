@@ -16,9 +16,10 @@
 
 package org.optaweb.vehiclerouting.service.demo;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.stream.Collectors.toList;
 import java.util.List;
 
 import org.optaweb.vehiclerouting.domain.Coordinates;
@@ -91,10 +92,12 @@ public class DemoService {
     }
 
     public String exportDataSet() {
-        List<Location> visits = 
-            new ArrayList<>(locationRepository.locations().stream().filter(l -> l.type() == LocationType.VISIT).collect(toList()));
-        List<Location> depots = 
-            new ArrayList<>(locationRepository.locations().stream().filter(l -> l.type() == LocationType.DEPOT).collect(toList()));
+        List<Location> visits =
+                new ArrayList<>(
+                        locationRepository.locations().stream().filter(l -> l.type() == LocationType.VISIT).collect(toList()));
+        List<Location> depots =
+                new ArrayList<>(
+                        locationRepository.locations().stream().filter(l -> l.type() == LocationType.DEPOT).collect(toList()));
         List<Vehicle> vehicles = vehicleRepository.vehicles();
         return dataSetMarshaller.marshal(new RoutingProblem(
                 "Custom Vehicle Routing instance", vehicles, depots, visits));

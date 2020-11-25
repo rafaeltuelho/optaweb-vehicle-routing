@@ -26,7 +26,8 @@ class VehicleDataTest {
     @Test
     void constructor_params_must_not_be_null() {
         assertThatNullPointerException().isThrownBy(() -> new VehicleData("Test", 1, null));
-        assertThatNullPointerException().isThrownBy(() -> new VehicleData(null, 1, LocationFactory.testLocation(1, LocationType.VEHICLE)));
+        assertThatNullPointerException()
+                .isThrownBy(() -> new VehicleData(null, 1, LocationFactory.testLocation(1, LocationType.VEHICLE)));
     }
 
     @Test

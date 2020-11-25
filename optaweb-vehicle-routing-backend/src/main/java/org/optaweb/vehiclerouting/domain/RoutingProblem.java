@@ -19,7 +19,6 @@ package org.optaweb.vehiclerouting.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Definition of the vehicle routing problem instance.
@@ -36,7 +35,7 @@ public class RoutingProblem {
      *
      * @param name the instance name
      * @param vehicles list of vehicles (not {@code null})
-     * @param depot the depot (may be {@code null} if there is no depot)
+     * @param depots list of depot (not {@code null})
      * @param visits list of visits (not {@code null})
      */
     public RoutingProblem(

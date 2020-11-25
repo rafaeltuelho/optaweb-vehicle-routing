@@ -65,7 +65,7 @@ class RouteChangedEventPublisherTest {
         RouteChangedEvent event = RouteChangedEventPublisher.solutionToEvent(solution, this);
 
         assertThat(event.vehicleIds()).isEmpty();
-        assertThat(event.depotId()).isEmpty();
+        assertThat(event.depotIds()).isEmpty();
         assertThat(event.visitIds()).isEmpty();
         assertThat(event.routes()).isEmpty();
         assertThat(event.distance()).isEqualTo(Distance.ZERO);
@@ -75,12 +75,12 @@ class RouteChangedEventPublisherTest {
     void solution_with_vehicles_and_no_depot_should_have_zero_routes() {
         long vehicleId = 1;
         PlanningVehicle vehicle = testVehicle(vehicleId);
-        VehicleRoutingSolution solution = solutionFromVisits(singletonList(vehicle), null, emptyList());
+        VehicleRoutingSolution solution = solutionFromVisits(singletonList(vehicle), emptyList(), emptyList());
 
         RouteChangedEvent event = RouteChangedEventPublisher.solutionToEvent(solution, this);
 
         assertThat(event.vehicleIds()).containsExactly(vehicleId);
-        assertThat(event.depotId()).isEmpty();
+        assertThat(event.depotIds()).isEmpty();
         assertThat(event.visitIds()).isEmpty();
         assertThat(event.routes()).isEmpty();
         assertThat(event.distance()).isEqualTo(Distance.ZERO);
@@ -92,13 +92,13 @@ class RouteChangedEventPublisherTest {
         long visitId = 2;
         VehicleRoutingSolution solution = solutionFromVisits(
                 emptyList(),
-                new PlanningDepot(testLocation(depotId)),
+                singletonList(new PlanningDepot(testLocation(depotId))),
                 singletonList(testVisit(visitId)));
 
         RouteChangedEvent event = RouteChangedEventPublisher.solutionToEvent(solution, this);
 
         assertThat(event.vehicleIds()).isEmpty();
-        assertThat(event.depotId()).contains(depotId);
+        assertThat(event.depotIds()).contains(depotId);
         assertThat(event.visitIds()).containsExactly(visitId);
         assertThat(event.routes()).isEmpty();
         assertThat(event.distance()).isEqualTo(Distance.ZERO);
@@ -116,12 +116,14 @@ class RouteChangedEventPublisherTest {
         long visitId1 = 2;
         long visitId2 = 3;
         PlanningDepot depot = new PlanningDepot(testLocation(depotId));
+        vehicle1.setDepot(depot);
+        vehicle2.setDepot(depot);
         PlanningVisit visit1 = testVisit(visitId1);
         PlanningVisit visit2 = testVisit(visitId2);
 
         VehicleRoutingSolution solution = solutionFromVisits(
                 asList(vehicle1, vehicle2),
-                depot,
+                asList(depot),
                 asList(visit1, visit2));
 
         // Send both vehicles to both visits
@@ -155,19 +157,21 @@ class RouteChangedEventPublisherTest {
         }
 
         assertThat(event.vehicleIds()).containsExactlyInAnyOrder(vehicleId1, vehicleId2);
-        assertThat(event.depotId()).contains(depotId);
+        assertThat(event.depotIds()).contains(depotId);
         assertThat(event.visitIds()).containsExactlyInAnyOrder(visitId1, visitId2);
         assertThat(event.distance()).isEqualTo(Distance.ofMillis(-softScore));
     }
 
     @Test
     void fail_fast_if_vehicles_next_visit_doesnt_exist() {
+        PlanningDepot depot = new PlanningDepot(testLocation(1));
         PlanningVehicle vehicle = testVehicle(1);
+        vehicle.setDepot(depot);
         vehicle.setNextVisit(testVisit(2));
 
         VehicleRoutingSolution solution = solutionFromVisits(
                 singletonList(vehicle),
-                new PlanningDepot(testLocation(1)),
+                singletonList(depot),
                 singletonList(testVisit(3)));
 
         assertThatIllegalArgumentException()
@@ -179,7 +183,8 @@ class RouteChangedEventPublisherTest {
     void vehicle_without_a_depot_is_illegal_if_depot_exists() {
         PlanningDepot depot = new PlanningDepot(testLocation(1));
         PlanningVehicle vehicle = testVehicle(1);
-        VehicleRoutingSolution solution = solutionFromVisits(singletonList(vehicle), depot, emptyList());
+        vehicle.setDepot(depot);
+        VehicleRoutingSolution solution = solutionFromVisits(singletonList(vehicle), singletonList(depot), emptyList());
         vehicle.setDepot(null);
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> RouteChangedEventPublisher.solutionToEvent(solution, this))

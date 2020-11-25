@@ -58,4 +58,16 @@ public class VehicleFactory {
     public static Vehicle testVehicle(long id) {
         return new Vehicle(id, "Vehicle " + id, 0, new Location(0L, LocationType.VEHICLE, Coordinates.valueOf(.1, .1)));
     }
+
+    /**
+     * Create a vehicle with given ID, capacity of zero and a given initial Location. The vehicle will have a non-empty name.
+     *
+     * @param id vehicle's ID
+     * @param id vehicle's initial Location
+     * @return new testing vehicle instance
+     */
+    public static Vehicle testVehicle(long id, Location location) {
+        return new Vehicle(id, "Vehicle " + id, 0, location);
+    }
+
 }

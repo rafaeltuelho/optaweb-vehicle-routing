@@ -33,7 +33,7 @@ class PortableVehicle {
     static PortableVehicle fromVehicle(Vehicle vehicle) {
         Objects.requireNonNull(vehicle, "vehicle must not be null");
         return new PortableVehicle(
-            vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()));
+                vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()));
     }
 
     PortableVehicle(long id, String name, int capacity, PortableLocation location) {

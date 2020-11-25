@@ -155,11 +155,11 @@ class WebSocketControllerTest {
 
     @Test
     void addVehicle() {
-        Location depot = new Location(1, LocationType.VISIT, Coordinates.valueOf(3, 5));
-        Vehicle vehicle = VehicleFactory.createVehicle(1, "vehicle", 77, depot);
-        Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
-        VehicleData vehicleData = VehicleFactory.vehicleData("Vehicle Test", 10, vehicleLocation);
-        
+        Location depot = new Location(1, LocationType.DEPOT, Coordinates.valueOf(3, 5));
+        Vehicle vehicle = VehicleFactory.createVehicle(1, "Vehicle Test", 10, depot);
+        // Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        VehicleData vehicleData = VehicleFactory.vehicleData("Vehicle Test", 10, depot);
+
         webSocketController.addVehicle(PortableVehicle.fromVehicle(vehicle));
         verify(vehicleService).createVehicleWithLocation(vehicleData);
     }

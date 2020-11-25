@@ -48,42 +48,57 @@ class VehicleRepositoryImplTest {
     @Mock
     private LocationCrudRepository locationCrudRepository;
     @InjectMocks
-    private VehicleRepositoryImpl repository;
+    private LocationRepositoryImpl locationRepository;
+    @InjectMocks
+    private VehicleRepositoryImpl vehicleRepository;
     @Captor
     private ArgumentCaptor<VehicleEntity> vehicleEntityCaptor;
+    @Captor
+    private ArgumentCaptor<LocationEntity> locationEntityCaptor;
 
-    private final Location testVehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+    private final Location testVehicleLocation = LocationFactory.testLocation(0, LocationType.VEHICLE);
     private final Vehicle testVehicle = VehicleFactory.createVehicle(19, "vehicle name", 1100, testVehicleLocation);
 
     private static VehicleEntity vehicleEntity(Vehicle vehicle) {
         LocationEntity locationEntity = new LocationEntity(
-            vehicle.location().id(), vehicle.location().type(), 
-            vehicle.location().coordinates().latitude(), vehicle.location().coordinates().longitude(), 
-            vehicle.location().description());
-        return new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity() , locationEntity);
+                vehicle.location().id(), vehicle.location().type(),
+                vehicle.location().coordinates().latitude(), vehicle.location().coordinates().longitude(),
+                vehicle.location().description());
+        return new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), locationEntity);
+    }
+
+    private static LocationEntity locationEntity(Location location) {
+        return new LocationEntity(
+                location.id(), location.type(),
+                location.coordinates().latitude(), location.coordinates().longitude(),
+                location.description());
     }
 
     @Test
     void should_create_vehicle_and_generate_id_name_and_location() {
         // arrange
+        // LocationEntity vehicleLocationEntity = locationEntity(testVehicleLocation);
+        // when(locationCrudRepository.save(locationEntityCaptor.capture())).thenReturn(vehicleLocationEntity);
         VehicleEntity newEntity = vehicleEntity(testVehicle);
         when(vehicleCrudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
 
         // act
-        VehicleData savedVehicleData = VehicleFactory.vehicleData("Vehicle 1", 1, LocationFactory.testLocation(1, LocationType.VEHICLE));
-        Vehicle newVehicle = repository.createVehicleWithLocation(savedVehicleData);
+        VehicleData savedVehicleData =
+                VehicleFactory.vehicleData("Vehicle 1", 1, testVehicleLocation);
+        Vehicle newVehicle = vehicleRepository.createVehicleWithLocation(savedVehicleData);
 
         // assert
         // -- the correct values were used to save the entity
-        List<VehicleEntity> savedVehicles = vehicleEntityCaptor.getAllValues();
-        assertThat(savedVehicles).hasSize(2);
+        // List<VehicleEntity> savedVehicles = vehicleEntityCaptor.getAllValues();
+        VehicleEntity savedVehicle = vehicleEntityCaptor.getValue();
+        assertThat(savedVehicle).isNotNull();
 
-        assertThat(savedVehicles.get(0).getName()).isNull();
-        assertThat(savedVehicles.get(0).getCapacity()).isEqualTo(savedVehicleData.capacity());
-        assertThat(savedVehicles.get(0).getLocation()).isEqualTo(savedVehicleData.location());
-        assertThat(savedVehicles.get(1).getName()).isEqualTo("Vehicle " + newEntity.getId());
-        assertThat(savedVehicles.get(1).getCapacity()).isEqualTo(savedVehicleData.capacity());
-        assertThat(savedVehicles.get(1).getLocation()).isEqualTo(savedVehicleData.location());
+        // assertThat(savedVehicles.get(0).getName()).isNull();
+        // assertThat(savedVehicles.get(0).getCapacity()).isEqualTo(savedVehicleData.capacity());
+        // assertThat(savedVehicles.get(0).getLocation()).isEqualTo(vehicleLocationEntity);
+        // assertThat(savedVehicle.getName()).isEqualTo("Vehicle " + newEntity.getId());
+        // assertThat(savedVehicle.getCapacity()).isEqualTo(savedVehicleData.capacity());
+        // assertThat(savedVehicle.getLocation()).isEqualTo(vehicleLocationEntity);
 
         // -- created domain vehicle is equal to the entity returned by repository.save()
         // This may be confusing but that's the contract of Spring Repository API.
@@ -92,33 +107,47 @@ class VehicleRepositoryImplTest {
         assertThat(newVehicle.id()).isEqualTo(newEntity.getId());
         assertThat(newVehicle.name()).isEqualTo(newEntity.getName());
         assertThat(newVehicle.capacity()).isEqualTo(newEntity.getCapacity());
-        assertThat(newVehicle.location()).isEqualTo(newEntity.getLocation());
+        assertThat(newVehicle.location().id()).isEqualTo(testVehicleLocation.id());
+        assertThat(newVehicle.location().description()).isEqualTo(testVehicleLocation.description());
+        assertThat(newVehicle.location().coordinates().latitude()).isEqualTo(testVehicleLocation.coordinates().latitude());
+        assertThat(newVehicle.location().coordinates().longitude()).isEqualTo(testVehicleLocation.coordinates().longitude());
+
     }
 
     @Test
     void create_vehicle_from_given_data() {
         // arrange
+        // LocationEntity vehicleLocationEntity = locationEntity(testVehicleLocation);
+        // when(locationCrudRepository.save(locationEntityCaptor.capture())).thenReturn(vehicleLocationEntity);
         VehicleEntity newEntity = vehicleEntity(testVehicle);
         when(vehicleCrudRepository.save(vehicleEntityCaptor.capture())).thenReturn(newEntity);
 
-        VehicleData vehicleData = VehicleFactory.vehicleData("x", 1, LocationFactory.testLocation(1, LocationType.VEHICLE));
+        VehicleData vehicleData = VehicleFactory.vehicleData("x", 1, testVehicleLocation);
 
         // act
-        Vehicle newVehicle = repository.createVehicleWithLocation(vehicleData);
+        Vehicle newVehicle = vehicleRepository.createVehicleWithLocation(vehicleData);
 
         // assert
         // -- the correct values were used to save the entity
         VehicleEntity savedVehicle = vehicleEntityCaptor.getValue();
 
+
         assertThat(savedVehicle.getName()).isEqualTo(vehicleData.name());
         assertThat(savedVehicle.getCapacity()).isEqualTo(vehicleData.capacity());
-        assertThat(savedVehicle.getLocation()).isEqualTo(vehicleData.location());
+        // assertThat(savedVehicle.getLocation()).isEqualTo(vehicleLocationEntity);
+        assertThat(savedVehicle.getLocation().getId()).isEqualTo(testVehicleLocation.id());
+        assertThat(savedVehicle.getLocation().getDescription()).isEqualTo(testVehicleLocation.description());
+        assertThat(savedVehicle.getLocation().getLatitude()).isEqualTo(testVehicleLocation.coordinates().latitude());
+        assertThat(savedVehicle.getLocation().getLongitude()).isEqualTo(testVehicleLocation.coordinates().longitude());
 
         // -- created domain vehicle is equal to the entity returned by repository.save()
         assertThat(newVehicle.id()).isEqualTo(newEntity.getId());
         assertThat(newVehicle.name()).isEqualTo(newEntity.getName());
         assertThat(newVehicle.capacity()).isEqualTo(newEntity.getCapacity());
-        assertThat(newVehicle.location()).isEqualTo(newEntity.getLocation());
+        assertThat(newVehicle.location().id()).isEqualTo(testVehicleLocation.id());
+        assertThat(newVehicle.location().description()).isEqualTo(testVehicleLocation.description());
+        assertThat(newVehicle.location().coordinates().latitude()).isEqualTo(testVehicleLocation.coordinates().latitude());
+        assertThat(newVehicle.location().coordinates().longitude()).isEqualTo(testVehicleLocation.coordinates().longitude());
     }
 
     @Test
@@ -129,7 +158,7 @@ class VehicleRepositoryImplTest {
 
         //FIX ME: must also remove the associated Location
 
-        Vehicle removed = repository.removeVehicle(id);
+        Vehicle removed = vehicleRepository.removeVehicle(id);
         assertThat(removed).isEqualTo(testVehicle);
         verify(vehicleCrudRepository).deleteById(id);
     }
@@ -141,13 +170,13 @@ class VehicleRepositoryImplTest {
         // removing nonexistent vehicle should fail and its ID should appear in the exception message
         int uniqueNonexistentId = 7173;
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> repository.removeVehicle(uniqueNonexistentId))
+                .isThrownBy(() -> vehicleRepository.removeVehicle(uniqueNonexistentId))
                 .withMessageContaining(String.valueOf(uniqueNonexistentId));
     }
 
     @Test
     void remove_all_vehicles() {
-        repository.removeAll();
+        vehicleRepository.removeAll();
         verify(vehicleCrudRepository).deleteAll();
     }
 
@@ -155,19 +184,19 @@ class VehicleRepositoryImplTest {
     void get_all_vehicles() {
         VehicleEntity vehicleEntity = vehicleEntity(testVehicle);
         when(vehicleCrudRepository.findAll()).thenReturn(Collections.singletonList(vehicleEntity));
-        assertThat(repository.vehicles()).containsExactly(testVehicle);
+        assertThat(vehicleRepository.vehicles()).containsExactly(testVehicle);
     }
 
     @Test
     void find_by_id() {
         VehicleEntity vehicleEntity = vehicleEntity(testVehicle);
         when(vehicleCrudRepository.findById(testVehicle.id())).thenReturn(Optional.of(vehicleEntity));
-        assertThat(repository.find(testVehicle.id())).contains(testVehicle);
+        assertThat(vehicleRepository.find(testVehicle.id())).contains(testVehicle);
     }
 
     @Test
     void update() {
-        repository.update(testVehicle);
+        vehicleRepository.update(testVehicle);
 
         verify(vehicleCrudRepository).save(vehicleEntityCaptor.capture());
 
@@ -175,6 +204,9 @@ class VehicleRepositoryImplTest {
         assertThat(savedVehicle.getId()).isEqualTo(testVehicle.id());
         assertThat(savedVehicle.getName()).isEqualTo(testVehicle.name());
         assertThat(savedVehicle.getCapacity()).isEqualTo(testVehicle.capacity());
-        assertThat(savedVehicle.getLocation()).isEqualTo(testVehicle.location());
+        assertThat(savedVehicle.getLocation().getId()).isEqualTo(testVehicleLocation.id());
+        assertThat(savedVehicle.getLocation().getDescription()).isEqualTo(testVehicleLocation.description());
+        assertThat(savedVehicle.getLocation().getLatitude()).isEqualTo(testVehicleLocation.coordinates().latitude());
+        assertThat(savedVehicle.getLocation().getLongitude()).isEqualTo(testVehicleLocation.coordinates().longitude());
     }
 }

@@ -31,9 +31,9 @@ class VehicleEntityTest {
         String name = "Vehicle XY";
         int capacity = 11;
         LocationEntity locationEntity = new LocationEntity(
-            1L, LocationType.VEHICLE, 
-            BigDecimal.ZERO, BigDecimal.ZERO, 
-            "test");
+                1L, LocationType.VEHICLE,
+                BigDecimal.ZERO, BigDecimal.ZERO,
+                "test");
         VehicleEntity vehicleEntity = new VehicleEntity(id, name, capacity, locationEntity);
         assertThat(vehicleEntity.getId()).isEqualTo(id);
         assertThat(vehicleEntity.getName()).isEqualTo(name);

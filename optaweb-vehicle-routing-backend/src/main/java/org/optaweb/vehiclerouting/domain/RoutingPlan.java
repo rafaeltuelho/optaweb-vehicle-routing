@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class RoutingPlan {
      *
      * @param distance the overall travel distance
      * @param vehicles all available vehicles
-     * @param depot the depot (may be {@code null})
+     * @param depots all depots
      * @param visits all visits
      * @param routes routes of all vehicles
      */
@@ -62,7 +61,7 @@ public class RoutingPlan {
         this.depots = new ArrayList<>(Objects.requireNonNull(depots));
         this.visits = new ArrayList<>(Objects.requireNonNull(visits));
         this.routes = new ArrayList<>(Objects.requireNonNull(routes));
-        
+
         if (depots.isEmpty()) {
             if (!routes.isEmpty()) {
                 throw new IllegalArgumentException("Routes must be empty when there is no depot");
@@ -117,7 +116,7 @@ public class RoutingPlan {
      * @return empty routing plan
      */
     public static RoutingPlan empty() {
-        return new RoutingPlan(Distance.ZERO, emptyList(), null, emptyList(), emptyList());
+        return new RoutingPlan(Distance.ZERO, emptyList(), emptyList(), emptyList(), emptyList());
     }
 
     /**
@@ -164,7 +163,6 @@ public class RoutingPlan {
     public List<Location> depots() {
         return Collections.unmodifiableList(depots);
     }
-
 
     /**
      * Routing plan is empty when there is no depot, no vehicles and no routes.

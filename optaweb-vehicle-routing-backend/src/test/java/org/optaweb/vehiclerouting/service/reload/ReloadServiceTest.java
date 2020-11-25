@@ -56,10 +56,12 @@ class ReloadServiceTest {
     @Mock
     ApplicationStartedEvent event;
 
-    private final Vehicle vehicle = VehicleFactory.createVehicle(193, "Vehicle 193", 100);
+    private final Coordinates coordinates1 = Coordinates.valueOf(0.1, 1.0);
+    private final Location vehicleLocation = new Location(0, LocationType.VEHICLE, coordinates1);
+    private final Vehicle vehicle = VehicleFactory.createVehicle(193, "Vehicle 193", 100, vehicleLocation);
     private final List<Vehicle> persistedVehicles = Arrays.asList(vehicle, vehicle);
-    private final Coordinates coordinates = Coordinates.valueOf(0.0, 1.0);
-    private final Location location = new Location(1, LocationType.VISIT, coordinates);
+    private final Coordinates coordinates2 = Coordinates.valueOf(0.2, 2.0);
+    private final Location location = new Location(1, LocationType.VISIT, coordinates2);
     private final List<Location> persistedLocations = Arrays.asList(location, location, location);
 
     @Test

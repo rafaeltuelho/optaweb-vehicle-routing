@@ -55,10 +55,10 @@ class PortableLocation {
     static Location toDomainLocation(PortableLocation portableLocation) {
         Objects.requireNonNull(portableLocation, "portable location must not be null");
         return LocationFactory.createLocation(
-            portableLocation.getId(),
-            portableLocation.getType(),
-            new Coordinates(portableLocation.getLatitude(), portableLocation.getLongitude()),
-            portableLocation.getDescription());
+                portableLocation.getId(),
+                portableLocation.getType(),
+                new Coordinates(portableLocation.getLatitude(), portableLocation.getLongitude()),
+                portableLocation.getDescription());
     }
 
     @JsonCreator

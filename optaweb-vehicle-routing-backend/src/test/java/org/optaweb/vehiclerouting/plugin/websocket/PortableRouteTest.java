@@ -64,7 +64,8 @@ class PortableRouteTest {
         assertThat(json.write(portableRoute)).isStrictlyEqualToJson("portable-route.json");
     }
 
-    private static PortableLocation location(long id, LocationType type, double latitude, double longitude, String description) {
+    private static PortableLocation location(long id, LocationType type, double latitude, double longitude,
+            String description) {
         return fromDomainLocation(new Location(id, type, Coordinates.valueOf(latitude, longitude), description));
     }
 

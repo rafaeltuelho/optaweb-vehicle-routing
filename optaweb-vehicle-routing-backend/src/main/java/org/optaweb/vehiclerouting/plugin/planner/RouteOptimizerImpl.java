@@ -101,22 +101,26 @@ class RouteOptimizerImpl implements RouteOptimizer {
                     solverManager.removeVisit(
                             PlanningVisitFactory.fromLocation(PlanningLocationFactory.fromDomain(domainLocation)));
                 }
-            } 
+            }
         } else if (domainLocation.type() == LocationType.DEPOT) {
             if (depots.isEmpty()) {
                 throw new IllegalArgumentException(
-                        "Cannot remove " + domainLocation + " because there are no depot locaations");
+                        "Cannot remove " + domainLocation + " because there are no depot locations");
             } else {
                 // check is there are any vehicle still associated to this depot
                 // TODO: should we remove Depot's vehicles in cascade mode???
                 vehicles.stream().filter(
-                    (v) -> v.getDepot().getLocation().getId() == domainLocation.id() 
-                ).findFirst().ifPresent( 
-                    (v) -> {
-                        throw new IllegalArgumentException(
-                            "Cannot remove " + domainLocation + "as it has vehicles associated to it. Make sure you remove all vehicles from this Depot first.");
-                    }
-                );
+                        (v) -> v.getDepot().getLocation().getId() == domainLocation.id()).findFirst().ifPresent(
+                                (v) -> {
+                                    throw new IllegalArgumentException(
+                                            "Cannot remove " + domainLocation
+                                                    + "as it has vehicles associated to it. Make sure you remove all vehicles from this Depot first.");
+                                });
+
+                // vehicles.stream().filter(
+                //         (v) -> v.getDepot().getLocation().getId() == domainLocation.id()).forEach((v) -> {
+                //             removeVehicle(toDomainVehicle(v));
+                //         });                
 
                 if (!depots.removeIf(item -> item.getId() == domainLocation.id())) {
                     throw new IllegalArgumentException("Cannot remove " + domainLocation + " because it doesn't exist");
@@ -131,7 +135,7 @@ class RouteOptimizerImpl implements RouteOptimizer {
                     // TODO maybe allow removing location by ID (only require the necessary information)
                     solverManager.removeDepot(new PlanningDepot(PlanningLocationFactory.fromDomain(domainLocation)));
                 }
-            } 
+            }
         }
     }
 
@@ -139,8 +143,13 @@ class RouteOptimizerImpl implements RouteOptimizer {
     public void addVehicle(Vehicle domainVehicle) {
         PlanningVehicle vehicle = PlanningVehicleFactory.fromDomain(domainVehicle);
         // with multiple Depots scenario Vehicle needs to know 
-        //    it's associated Depot (initial/start/home location) upfront!
-        //vehicle.setDepot(depot); 
+        //  it's associated Depot (initial/start/home location) upfront!
+        //  for now each Vehicle will use it's (initial) location as the PlanningDepot.
+        //  in the future we'll consider
+        PlanningDepot planningDepot = new PlanningDepot(
+            PlanningLocationFactory.fromDomain(domainVehicle.location()));
+        vehicle.setDepot(planningDepot);
+
         vehicles.add(vehicle);
         if (visits.isEmpty()) {
             publishSolution();
@@ -184,7 +193,7 @@ class RouteOptimizerImpl implements RouteOptimizer {
     @Override
     public void removeAllLocations() {
         solverManager.stopSolver();
-        depots.clear();;
+        depots.clear();
         visits.clear();
         publishSolution();
     }

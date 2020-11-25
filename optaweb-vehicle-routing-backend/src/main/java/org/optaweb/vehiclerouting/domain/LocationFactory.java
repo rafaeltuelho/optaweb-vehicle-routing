@@ -64,7 +64,7 @@ public class LocationFactory {
     }
 
     /**
-     * Create a location with given ID, type VISIT and fake coordinates. 
+     * Create a location with given ID, type VISIT and fake coordinates.
      * The location will have a non-empty description.
      *
      * @param id location's ID

@@ -37,7 +37,7 @@ public class VehicleEntity {
     private String name;
     private int capacity;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "LOCATION_ID")
+    @JoinColumn(name = "LOCATION_ID", referencedColumnName = "id")
     private LocationEntity location;
 
     protected VehicleEntity() {
@@ -45,11 +45,11 @@ public class VehicleEntity {
     }
 
     //Vehicle must have a Location from now on
-    // public VehicleEntity(long id, String name, int capacity) {
-    //     this.id = id;
-    //     this.name = name;
-    //     this.capacity = capacity;
-    // }
+    public VehicleEntity(long id, String name, int capacity) {
+        this.id = id;
+        this.name = name;
+        this.capacity = capacity;
+    }
 
     public VehicleEntity(long id, String name, int capacity, LocationEntity location) {
         this.id = id;
@@ -70,13 +70,13 @@ public class VehicleEntity {
         return capacity;
     }
 
-	public LocationEntity getLocation() {
-		return location;
-	}
+    public LocationEntity getLocation() {
+        return location;
+    }
 
-	public void setLocation(LocationEntity location) {
-		this.location = location;
-	}
+    public void setLocation(LocationEntity location) {
+        this.location = location;
+    }
 
     @Override
     public String toString() {
@@ -84,7 +84,7 @@ public class VehicleEntity {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +
-                ", location=" + location + 
+                ", location=" + location +
                 '}';
     }
 

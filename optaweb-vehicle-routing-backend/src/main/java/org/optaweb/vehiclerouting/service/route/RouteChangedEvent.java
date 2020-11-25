@@ -29,7 +29,7 @@ import org.springframework.context.ApplicationEvent;
  */
 public class RouteChangedEvent extends ApplicationEvent {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final Distance distance;
     private final List<Long> vehicleIds;

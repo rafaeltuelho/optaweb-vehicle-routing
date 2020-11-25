@@ -32,6 +32,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.optaweb.vehiclerouting.domain.Location;
+import org.optaweb.vehiclerouting.domain.LocationFactory;
+import org.optaweb.vehiclerouting.domain.LocationType;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
@@ -54,11 +57,13 @@ class VehicleServiceTest {
         final long vehicleId = 63;
         final String name = "Veh5";
         final int capacity = VehicleService.DEFAULT_VEHICLE_CAPACITY * 2 + 29;
-        final Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity);
-        // verify that new vehicle is created with correct initial name and capacity
-        when(vehicleRepository.createVehicle(VehicleService.DEFAULT_VEHICLE_CAPACITY)).thenReturn(vehicle);
+        final Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        final Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity, vehicleLocation);
+        VehicleData vehicleData = VehicleFactory.vehicleData(name, capacity, vehicleLocation);
+        // verify that new vehicle is created with correct initial name, capacity and location
+        when(vehicleRepository.createVehicleWithLocation(vehicleData)).thenReturn(vehicle);
 
-        vehicleService.createVehicle();
+        vehicleService.createVehicleWithLocation(vehicleData);
 
         // verify that vehicle provided by repository is passed to optimizer
         verify(optimizer).addVehicle(vehicleArgumentCaptor.capture());
@@ -73,11 +78,12 @@ class VehicleServiceTest {
         final long vehicleId = 63;
         final String name = "Veh5";
         final int capacity = 101;
-        VehicleData vehicleData = VehicleFactory.vehicleData(name, capacity);
-        final Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity);
-        when(vehicleRepository.createVehicle(vehicleData)).thenReturn(vehicle);
+        final Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        VehicleData vehicleData = VehicleFactory.vehicleData(name, capacity, vehicleLocation);
+        final Vehicle vehicle = VehicleFactory.createVehicle(vehicleId, name, capacity, vehicleLocation);
+        when(vehicleRepository.createVehicleWithLocation(vehicleData)).thenReturn(vehicle);
 
-        vehicleService.createVehicle(vehicleData);
+        vehicleService.createVehicleWithLocation(vehicleData);
 
         // verify that vehicle provided by repository is passed to optimizer
         verify(optimizer).addVehicle(vehicle);
@@ -138,7 +144,8 @@ class VehicleServiceTest {
     void changeCapacity() {
         final long vehicleId = 1;
         final int capacity = 123;
-        final Vehicle originalVehicle = VehicleFactory.createVehicle(vehicleId, "1", capacity - 10);
+        final Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
+        final Vehicle originalVehicle = VehicleFactory.createVehicle(vehicleId, "1", capacity - 10, vehicleLocation);
         when(vehicleRepository.find(vehicleId)).thenReturn(Optional.of(originalVehicle));
 
         vehicleService.changeCapacity(vehicleId, capacity);

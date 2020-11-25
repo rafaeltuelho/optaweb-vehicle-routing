@@ -45,7 +45,10 @@ import org.optaplanner.core.api.solver.event.SolverEventListener;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaweb.vehiclerouting.plugin.planner.change.AddVisit;
 import org.optaweb.vehiclerouting.plugin.planner.change.RemoveVisit;
+import org.optaweb.vehiclerouting.plugin.planner.domain.DistanceMap;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningDepot;
+import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningLocation;
+import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningLocationFactory;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVehicle;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVehicleFactory;
 import org.optaweb.vehiclerouting.plugin.planner.domain.VehicleRoutingSolution;
@@ -87,12 +90,15 @@ class SolverIntegrationTest {
 
     @Test
     void removing_visits_should_not_fail() {
-        long distance = 1;
+        PlanningLocation depot = PlanningLocationFactory.testLocation(1, mockDistanceMap());
+        PlanningDepot planningDepot = new PlanningDepot(depot);
         PlanningVehicle vehicle = PlanningVehicleFactory.testVehicle(1);
+        vehicle.setDepot(planningDepot); //FIX ME: this is supposed to change
+
         VehicleRoutingSolution solution = solutionFromVisits(
                 singletonList(vehicle),
-                new PlanningDepot(testLocation(1, location -> distance)),
-                singletonList(fromLocation(testLocation(2, location -> distance))));
+                singletonList(planningDepot),
+                singletonList(fromLocation(testLocation(2, mockDistanceMap()))));
 
         Solver<VehicleRoutingSolution> solver =
                 SolverFactory.<VehicleRoutingSolution> create(solverConfig).buildSolver();
@@ -102,7 +108,7 @@ class SolverIntegrationTest {
         for (int id = 3; id < 6; id++) {
             logger.info("Add visit ({})", id);
             monitor.beforeProblemFactChange();
-            solver.addProblemFactChange(new AddVisit(fromLocation(testLocation(id, location -> distance))));
+            solver.addProblemFactChange( new AddVisit(fromLocation(testLocation(id, mockDistanceMap()))) );
             assertThat(monitor.awaitAllProblemFactChanges(1000)).isTrue();
         }
 
@@ -142,6 +148,10 @@ class SolverIntegrationTest {
         throw new AssertionError();
     }
 
+    private static DistanceMap mockDistanceMap() {
+        return location -> 60;
+    }
+    
     static class ProblemFactChangeProcessingMonitor implements SolverEventListener<VehicleRoutingSolution> {
 
         private static final Logger logger = LoggerFactory.getLogger(ProblemFactChangeProcessingMonitor.class);

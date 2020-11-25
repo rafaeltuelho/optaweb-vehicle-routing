@@ -41,13 +41,13 @@ class RoutingProblemListTest {
     @Test
     void all_by_name_should_return_expected_problems() {
         List<VehicleData> vehicles = Collections.emptyList();
-        Location depot = new Location(0, LocationType.VISIT, Coordinates.valueOf(10, -20));
+        List<Location> depots = Arrays.asList(new Location(0, LocationType.DEPOT, Coordinates.valueOf(10, -20)));
         List<Location> visits = Collections.emptyList();
         String name1 = "Problem A";
         String name2 = "Problem B";
         RoutingProblemList routingProblemList = new RoutingProblemList(Arrays.asList(
-                new RoutingProblem(name1, vehicles, depot, visits),
-                new RoutingProblem(name2, vehicles, depot, visits)));
+                new RoutingProblem(name1, vehicles, depots, visits),
+                new RoutingProblem(name2, vehicles, depots, visits)));
 
         assertThat(routingProblemList.all()).extracting("name").containsExactlyInAnyOrder(name1, name2);
 
