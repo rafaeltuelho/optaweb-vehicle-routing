@@ -28,3 +28,6 @@ yarn-error.log*
 # SonarQube Scanner working dir
 # Runs on Travis but can be run locally with npx (see travis-sonarcloud.sh)
 /.scannerwork
+
+# VSCode
+/.vscode

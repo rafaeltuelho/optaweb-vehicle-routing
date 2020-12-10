@@ -30,12 +30,15 @@ public class DataSetVehicle {
     final int capacity;
     @JsonProperty
     final DataSetLocation location;
+    @JsonProperty
+    final long depotId;
 
     @JsonCreator
     public DataSetVehicle(@JsonProperty("name") String name, @JsonProperty("capacity") int capacity,
-            @JsonProperty("location") DataSetLocation location) {
+            @JsonProperty("location") DataSetLocation location, @JsonProperty("depotId") long depotId) {
         this.name = name;
         this.capacity = capacity;
         this.location = location;
+        this.depotId = depotId;
     }
 }

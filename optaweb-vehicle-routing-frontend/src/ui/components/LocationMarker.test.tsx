@@ -18,11 +18,12 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Marker } from 'react-leaflet';
-import { Location } from 'store/route/types';
+import { Location, LocationType } from 'store/route/types';
 import LocationMarker, { Props } from './LocationMarker';
 
 const location: Location = {
   id: 1,
+  type: LocationType.Visit,
   lat: 1.345678,
   lng: 1.345678,
 };

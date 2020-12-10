@@ -23,12 +23,12 @@ import { AppState } from 'store/types';
 import LocationList from 'ui/components/LocationList';
 
 interface StateProps {
-  depot: Location | null;
+  depots: Location[];
   visits: Location[];
 }
 
 const mapStateToProps = ({ plan }: AppState): StateProps => ({
-  depot: plan.depot,
+  depots: plan.depots,
   visits: plan.visits,
 });
 
@@ -45,7 +45,7 @@ const mapDispatchToProps: DispatchProps = {
 export type Props = StateProps & DispatchProps;
 
 export const Visits: React.FC<Props> = ({
-  depot,
+  depots,
   visits,
   removeHandler,
 }: Props) => (
@@ -57,7 +57,7 @@ export const Visits: React.FC<Props> = ({
     <LocationList
       removeHandler={removeHandler}
       selectHandler={() => undefined}
-      depot={depot}
+      depots={depots}
       visits={visits}
     />
   </>

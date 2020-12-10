@@ -15,8 +15,8 @@
  */
 
 import '@patternfly/patternfly/patternfly.css';
-import { Button, Text, TextContent, TextInput, TextVariants } from '@patternfly/react-core';
-import { PlusSquareIcon, EnterpriseIcon } from '@patternfly/react-icons';
+import { Button, Text, TextContent, TextInput, TextVariants, Split, SplitItem, GutterSize } from '@patternfly/react-core';
+import { PlusSquareIcon, EnterpriseIcon, LocationArrowIcon, CarIcon } from '@patternfly/react-icons';
 import { latLng } from 'leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { type } from 'os';
@@ -27,7 +27,9 @@ export interface Props {
   searchDelay: number;
   boundingBox: [LatLng, LatLng] | null;
   countryCodeSearchFilter: string[];
-  addHandler: (result: Result) => void;
+  addVisitHandler: (result: Result) => void;
+  addDepotHandler: (result: Result)  => void;
+  addVehicleHandler: (result: Result) => void;
 }
 
 export interface State {
@@ -75,7 +77,8 @@ class SearchBox extends React.Component<Props, State> {
     this.timeoutId = null;
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleVisitClick = this.handleVisitClick.bind(this);
+    this.handleDepotClick = this.handleDepotClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -119,13 +122,23 @@ class SearchBox extends React.Component<Props, State> {
     }
   }
 
-  handleClick(index: number, type: LocationType) {
-    // console.debug('Original result in state: ', this.state.results[index]);
-    // let result = {...this.state.results[index]};
+  handleVisitClick(index: number) {
     let resultCopy = Object.assign({}, this.state.results[index]);
-    resultCopy.latLng.type = type;
-    // console.debug('SearchBox result after change: ', resultCopy);
-    this.props.addHandler(resultCopy);
+    resultCopy.latLng.type = LocationType.Visit;
+    this.props.addVisitHandler(resultCopy);
+
+    this.setState({
+      query: '',
+      results: [],
+      attributions: [],
+    });
+    // TODO focus text input
+  }
+
+  handleDepotClick(index: number) {
+    let resultCopy = Object.assign({}, this.state.results[index]);
+    resultCopy.latLng.type = LocationType.Depot;
+    this.props.addDepotHandler(resultCopy);
 
     this.setState({
       query: '',
@@ -154,25 +167,57 @@ class SearchBox extends React.Component<Props, State> {
               {results.map((result, index) => (
                 <li key={`result: ${result}`}>
                   <div className="pf-c-options-menu__menu-item">
-                    {result.address}
-                    <Button
-                      className="pf-c-options-menu__menu-item-icon"
-                      variant="link"
-                      type="button"
-                      onClick={() => this.handleClick(index, LocationType.Visit)}
-                      data-cy={`geosearch-location-item-button-${index}`}
-                    >
-                      <PlusSquareIcon />
-                    </Button>
-                    <Button
-                      className="pf-c-options-menu__menu-item-icon"
-                      variant="link"
-                      type="button"
-                      onClick={() => this.handleClick(index, LocationType.Depot)}
-                      data-cy={`geosearch-location-item-button-${index}`}
-                    >
-                      <EnterpriseIcon />
-                    </Button>
+                    <Split gutter={GutterSize.md} style={{ overflowY: 'auto', overflowX: 'auto' }}>
+                      <SplitItem
+                        isFilled={true}
+                        style={{ display: 'grid', flexDirection: 'column' }}
+                      >
+                        {result.address}
+                      </SplitItem>
+                      <SplitItem
+                        isFilled={true}
+                        style={{ display: 'grid', flexDirection: 'column' }}
+                      >
+                        <Button
+                          className="pf-c-options-menu__menu-item-icon"
+                          variant="link"
+                          type="button"
+                          onClick={() => this.handleVisitClick(index)}
+                          data-cy={`geosearch-location-item-button-${index}`}
+                        >
+                          <LocationArrowIcon />
+                        </Button>
+                      </SplitItem>
+                      <SplitItem
+                        isFilled={true}
+                        style={{ display: 'grid', flexDirection: 'column' }}
+                      >
+                        <Button
+                          className="pf-c-options-menu__menu-item-icon"
+                          variant="link"
+                          type="button"
+                          onClick={() => this.handleDepotClick(index)}
+                          data-cy={`geosearch-location-item-button-${index}`}
+                        >
+                          <EnterpriseIcon />
+                        </Button>
+                      </SplitItem>
+                      <SplitItem
+                        isFilled={true}
+                        style={{ display: 'grid', flexDirection: 'column' }}
+                      >
+                        <Button
+                          className="pf-c-options-menu__menu-item-icon"
+                          variant="link"
+                          type="button"
+                          onClick={() => this.handleDepotClick(index)}
+                          data-cy={`geosearch-location-item-button-${index}`}
+                          isDisabled={true}
+                        >
+                          <CarIcon />
+                        </Button>
+                      </SplitItem>
+                    </Split>
                   </div>
                 </li>
               ))}

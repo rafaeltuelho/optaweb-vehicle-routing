@@ -26,11 +26,13 @@ public class VehicleData {
     private final String name;
     private final int capacity;
     private final Location location;
+    private final long depotId;
 
-    VehicleData(String name, int capacity, Location location) {
+    VehicleData(String name, int capacity, Location location, long depotId) {
         this.name = Objects.requireNonNull(name);
         this.capacity = capacity;
         this.location = Objects.requireNonNull(location);
+        this.depotId = depotId;
     }
 
     /**
@@ -60,6 +62,15 @@ public class VehicleData {
         return location;
     }
 
+    /**
+     * Vehicle's depot Id.
+     *
+     * @return vehicle's depot Id
+     */
+	public long depotId() {
+		return depotId;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,16 +82,18 @@ public class VehicleData {
         VehicleData that = (VehicleData) o;
         return capacity == that.capacity &&
                 location.equals(that.location) &&
-                name.equals(that.name);
+                name.equals(that.name) &&
+                depotId == that.depotId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, capacity, location);
+        return Objects.hash(name, capacity, location, depotId);
     }
 
     @Override
     public String toString() {
         return name.isEmpty() ? "<noname>" : "'" + name + "'";
     }
+
 }

@@ -87,6 +87,13 @@ class DistanceMatrixImpl implements DistanceMatrix {
         };
     }
 
+    @Override
+    public DistanceMatrixRow getDistanceMatrix(Location existingLocation) {
+        return locationId -> {
+            return matrix.get(existingLocation).get(locationId);
+        };        
+    }
+
     private Distance calculateOrRestoreDistance(Location from, Location to) {
         long distance = distanceRepository.getDistance(from, to);
         if (distance < 0) {

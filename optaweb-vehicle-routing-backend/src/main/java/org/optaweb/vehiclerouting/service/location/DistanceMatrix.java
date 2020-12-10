@@ -24,6 +24,7 @@ import org.optaweb.vehiclerouting.domain.Location;
 public interface DistanceMatrix {
 
     DistanceMatrixRow addLocation(Location location);
+    DistanceMatrixRow getDistanceMatrix(Location existingLocation);
 
     void removeLocation(Location location);
 

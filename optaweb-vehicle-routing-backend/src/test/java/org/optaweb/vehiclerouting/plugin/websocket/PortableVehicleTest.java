@@ -46,9 +46,10 @@ class PortableVehicleTest {
         long id = 321;
         String name = "Pink: {XY-123} \"B\"";
         int capacity = 78;
+        long depotId = 1;
         PortableLocation portableVehicleLocation =
                 new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
-        PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation);
+        PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation, depotId);
         String jsonTemplate = "{\"id\":%d,\"name\":\"%s\",\"capacity\":%d}";
         assertThat(json.write(portableVehicle)).isEqualToJson(
                 String.format(jsonTemplate, id, name.replaceAll("\"", "\\\\\""), capacity));
@@ -59,8 +60,8 @@ class PortableVehicleTest {
         PortableLocation portableVehicleLocation =
                 new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
 
-        assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, null, 2, portableVehicleLocation));
-        assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, "test", 2, null));
+        assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, null, 2, portableVehicleLocation, 1));
+        assertThatNullPointerException().isThrownBy(() -> new PortableVehicle(1, "test", 2, null, 1));
     }
 
     @Test
@@ -85,22 +86,23 @@ class PortableVehicleTest {
         long id = 123456;
         String name = "x y";
         int capacity = 444111;
+        long depotId = 1;
         Location domainLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
         PortableLocation portableVehicleLocation =
                 new PortableLocation(1, LocationType.VEHICLE, BigDecimal.ZERO, BigDecimal.ZERO, "vTest");
-        PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation);
+        PortableVehicle portableVehicle = new PortableVehicle(id, name, capacity, portableVehicleLocation, depotId);
 
         assertThat(portableVehicle)
                 // equals()
                 .isNotEqualTo(null)
                 .isNotEqualTo(VehicleFactory.createVehicle(id, name, capacity, domainLocation))
-                .isNotEqualTo(new PortableVehicle(id + 1, name, capacity, portableVehicleLocation))
-                .isNotEqualTo(new PortableVehicle(id, name + "z", capacity, portableVehicleLocation))
-                .isNotEqualTo(new PortableVehicle(id, name, capacity + 1, portableVehicleLocation))
+                .isNotEqualTo(new PortableVehicle(id + 1, name, capacity, portableVehicleLocation, depotId))
+                .isNotEqualTo(new PortableVehicle(id, name + "z", capacity, portableVehicleLocation, depotId))
+                .isNotEqualTo(new PortableVehicle(id, name, capacity + 1, portableVehicleLocation, depotId))
                 .isEqualTo(portableVehicle)
-                .isEqualTo(new PortableVehicle(id, name, capacity, portableVehicleLocation))
+                .isEqualTo(new PortableVehicle(id, name, capacity, portableVehicleLocation, depotId))
                 // hasCode()
-                .hasSameHashCodeAs(new PortableVehicle(id, name, capacity, portableVehicleLocation))
+                .hasSameHashCodeAs(new PortableVehicle(id, name, capacity, portableVehicleLocation, depotId))
                 // toString()
                 .asString()
                 .contains(

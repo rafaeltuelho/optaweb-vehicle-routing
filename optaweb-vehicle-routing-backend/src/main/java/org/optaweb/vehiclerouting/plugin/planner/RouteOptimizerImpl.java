@@ -18,6 +18,7 @@ package org.optaweb.vehiclerouting.plugin.planner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.LocationType;
@@ -30,7 +31,9 @@ import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVehicleFactory;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVisit;
 import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningVisitFactory;
 import org.optaweb.vehiclerouting.plugin.planner.domain.SolutionFactory;
+import org.optaweb.vehiclerouting.service.location.DistanceMatrix;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
+import org.optaweb.vehiclerouting.service.location.LocationRepository;
 import org.optaweb.vehiclerouting.service.location.RouteOptimizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +52,20 @@ class RouteOptimizerImpl implements RouteOptimizer {
     private final SolverManager solverManager;
     private final RouteChangedEventPublisher routeChangedEventPublisher;
 
+    private final LocationRepository locationRepository;
+    private final DistanceMatrix distanceMatrix;
+
     private final List<PlanningVehicle> vehicles = new ArrayList<>();
     private final List<PlanningVisit> visits = new ArrayList<>();
     private final List<PlanningDepot> depots = new ArrayList<>();
 
     @Autowired
-    RouteOptimizerImpl(SolverManager solverManager, RouteChangedEventPublisher routeChangedEventPublisher) {
+    RouteOptimizerImpl(SolverManager solverManager, RouteChangedEventPublisher routeChangedEventPublisher, 
+        LocationRepository locationRepository, DistanceMatrix distanceMatrix) {
         this.solverManager = solverManager;
         this.routeChangedEventPublisher = routeChangedEventPublisher;
+        this.locationRepository = locationRepository;
+        this.distanceMatrix = distanceMatrix;
     }
 
     @Override
@@ -70,7 +79,7 @@ class RouteOptimizerImpl implements RouteOptimizer {
         } else { // Does all the other types should be considered Visits?
             PlanningVisit visit = PlanningVisitFactory.fromLocation(location);
             visits.add(visit);
-            if (vehicles.isEmpty()) {
+            if (vehicles.isEmpty() || depots.isEmpty()) { // FIX ME: actually, there is no vehicle without depot... 
                 publishSolution(); // publish just to update the view on client-side (front-end)
             } else if (visits.size() == 1) {
                 solverManager.startSolver(SolutionFactory.solutionFromVisits(vehicles, depots, visits));
@@ -145,9 +154,14 @@ class RouteOptimizerImpl implements RouteOptimizer {
         // with multiple Depots scenario Vehicle needs to know 
         //  it's associated Depot (initial/start/home location) upfront!
         //  for now each Vehicle will use it's (initial) location as the PlanningDepot.
-        //  in the future we'll consider
-        PlanningDepot planningDepot = new PlanningDepot(
-            PlanningLocationFactory.fromDomain(domainVehicle.location()));
+        //  in the future we'll consider another approach
+        Optional<Location> depotLocation = locationRepository.find(domainVehicle.depotId());
+        if (depotLocation.isEmpty())
+            throw new IllegalArgumentException("Depot [" + domainVehicle.depotId() + "] not found! This should not happen.");
+
+        DistanceMatrixRow distanceMatrixRow = distanceMatrix.getDistanceMatrix(depotLocation.get());
+        PlanningDepot planningDepot = new PlanningDepot(PlanningLocationFactory.fromDomain(depotLocation.get(), new DistanceMapImpl(distanceMatrixRow)));
+
         vehicle.setDepot(planningDepot);
 
         vehicles.add(vehicle);

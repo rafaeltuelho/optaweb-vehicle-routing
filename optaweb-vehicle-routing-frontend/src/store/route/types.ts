@@ -24,16 +24,15 @@ export interface LatLng {
 export enum LocationType {
   Visit = 'VISIT',
   Depot = 'DEPOT',
-  Car = 'CAR',
+  Vehicle = 'VEHICLE',
   Other = 'OTHER',
 }
 
+// TODO: remove this type and work with the Location Type
 export interface LatLngWithTypeDescription extends LatLng {
   type: LocationType;
   description: string;
 }
-
-// TODO: define a new type for Depot
 
 export interface Location extends LatLng {
   readonly id: number;
@@ -42,11 +41,16 @@ export interface Location extends LatLng {
   readonly description?: string;
 }
 
+export interface Depot extends Location {
+  vehicles: number[];
+}
+
 export interface Vehicle {
   readonly id: number;
   readonly name: string;
   readonly capacity: number;
-  //TODO: add Location
+  readonly location: Location;
+  depotId?: number;
 }
 
 export interface Route {
@@ -63,7 +67,7 @@ export interface RouteWithTrack extends Route {
 export interface RoutingPlan {
   readonly distance: string;
   readonly vehicles: Vehicle[];
-  readonly depots: Location[];
+  depots: Depot[];
   readonly visits: Location[];
   readonly routes: RouteWithTrack[];
 }
@@ -72,7 +76,11 @@ export enum ActionType {
   UPDATE_ROUTING_PLAN = 'UPDATE_ROUTING_PLAN',
   DELETE_LOCATION = 'DELETE_LOCATION',
   ADD_LOCATION = 'ADD_LOCATION',
+  ADD_DEPOT = 'ADD_DEPOT',
+  DELETE_DEPOT = 'DELETE_DEPOT',
   ADD_VEHICLE = 'ADD_VEHICLE',
+  ADD_DEPOT_VEHICLE = 'ADD_DEPOT_VEHICLES',
+  DELETE_DEPOT_VEHICLE = 'DELETE_DEPOT_VEHICLES',
   DELETE_VEHICLE = 'DELETE_VEHICLE',
   CLEAR_SOLUTION = 'CLEAR_SOLUTION',
 }
@@ -81,13 +89,30 @@ export interface AddLocationAction extends Action<ActionType.ADD_LOCATION> {
   readonly value: LatLngWithTypeDescription;
 }
 
+export interface AddDepotAction extends Action<ActionType.ADD_DEPOT> {
+  readonly value: LatLngWithTypeDescription;
+}
+
 export interface AddVehicleAction extends Action<ActionType.ADD_VEHICLE> {
+  readonly value: Vehicle;
+}
+
+export interface AddDepotVehicleAction extends Action<ActionType.ADD_DEPOT_VEHICLE> {
+  readonly value: Vehicle;
+}
+
+export interface DeleteDepotVehicleAction extends Action<ActionType.DELETE_DEPOT_VEHICLE> {
+  readonly value: number;
 }
 
 export interface ClearRouteAction extends Action<ActionType.CLEAR_SOLUTION> {
 }
 
 export interface DeleteLocationAction extends Action<ActionType.DELETE_LOCATION> {
+  readonly value: number;
+}
+
+export interface DeleteDepotAction extends Action<ActionType.DELETE_DEPOT> {
   readonly value: number;
 }
 
@@ -106,8 +131,12 @@ export interface UpdateRouteAction extends Action<ActionType.UPDATE_ROUTING_PLAN
 
 export type RouteAction =
   | AddLocationAction
+  | AddDepotAction
   | AddVehicleAction
   | DeleteLocationAction
+  | DeleteDepotAction
   | DeleteVehicleAction
+  | AddDepotVehicleAction
+  | DeleteDepotVehicleAction
   | UpdateRouteAction
   | ClearRouteAction;

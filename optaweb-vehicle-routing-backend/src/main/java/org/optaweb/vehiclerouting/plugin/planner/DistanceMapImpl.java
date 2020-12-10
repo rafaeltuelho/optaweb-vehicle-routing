@@ -39,7 +39,7 @@ public class DistanceMapImpl implements DistanceMap {
 
     @Override
     public long distanceTo(PlanningLocation location) {
-        //logger.debug("distanceTo ({}) is '{}' millis", location, distanceMatrixRow.distanceTo(location.getId()).millis());
+        // logger.debug("distanceTo ({}) is '{}' millis", location, distanceMatrixRow.distanceTo(location.getId()).millis());
         return distanceMatrixRow.distanceTo(location.getId()).millis();
     }
 

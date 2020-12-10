@@ -25,31 +25,34 @@ class VehicleDataTest {
 
     @Test
     void constructor_params_must_not_be_null() {
-        assertThatNullPointerException().isThrownBy(() -> new VehicleData("Test", 1, null));
+        assertThatNullPointerException().isThrownBy(() -> new VehicleData("Test", 1, null, 1));
         assertThatNullPointerException()
-                .isThrownBy(() -> new VehicleData(null, 1, LocationFactory.testLocation(1, LocationType.VEHICLE)));
+                .isThrownBy(() -> new VehicleData(null, 1, LocationFactory.testLocation(1, LocationType.VEHICLE), 1));
     }
 
     @Test
     void vehicles_are_equal_if_they_have_same_properties() {
         String name = "vehicle name";
         int capacity = 20;
+        long depotId = 1;
 
         Location vehicleLocation = LocationFactory.testLocation(1, LocationType.VEHICLE);
-        VehicleData vehicleData = new VehicleData(name, capacity, vehicleLocation);
+        VehicleData vehicleData = new VehicleData(name, capacity, vehicleLocation, depotId);
 
         assertThat(vehicleData)
                 // different name
-                .isNotEqualTo(new VehicleData("", capacity, vehicleLocation))
+                .isNotEqualTo(new VehicleData("", capacity, vehicleLocation, depotId))
                 // different capacity
-                .isNotEqualTo(new VehicleData(name, capacity + 1, vehicleLocation))
+                .isNotEqualTo(new VehicleData(name, capacity + 1, vehicleLocation, depotId + 1))
+                // different depotId
+                .isNotEqualTo(new VehicleData(name, capacity + 1, vehicleLocation, depotId))
                 // null
                 .isNotEqualTo(null)
                 // different type with equal properties
-                .isNotEqualTo(new Vehicle(0, name, capacity, vehicleLocation))
+                .isNotEqualTo(new Vehicle(0, name, capacity, vehicleLocation, depotId))
                 // same object -> OK
                 .isEqualTo(vehicleData)
                 // same properties -> OK
-                .isEqualTo(new VehicleData(name, capacity, vehicleLocation));
+                .isEqualTo(new VehicleData(name, capacity, vehicleLocation, depotId));
     }
 }

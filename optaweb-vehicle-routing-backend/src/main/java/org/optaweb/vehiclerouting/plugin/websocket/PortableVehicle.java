@@ -18,6 +18,9 @@ package org.optaweb.vehiclerouting.plugin.websocket;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.optaweb.vehiclerouting.domain.Vehicle;
 
 /**
@@ -29,18 +32,26 @@ class PortableVehicle {
     private final String name;
     private final int capacity;
     private final PortableLocation location;
+    private final long depotId;
 
     static PortableVehicle fromVehicle(Vehicle vehicle) {
         Objects.requireNonNull(vehicle, "vehicle must not be null");
         return new PortableVehicle(
-                vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()));
+                vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()), vehicle.depotId());
     }
 
-    PortableVehicle(long id, String name, int capacity, PortableLocation location) {
+    @JsonCreator
+    PortableVehicle(
+        @JsonProperty(value = "id") long id, 
+        @JsonProperty(value = "name") String name, 
+        @JsonProperty(value = "capacity") int capacity, 
+        @JsonProperty(value = "location") PortableLocation location,
+        @JsonProperty(value = "depotId") long depotId) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.capacity = capacity;
         this.location = Objects.requireNonNull(location);
+        this.depotId = depotId;
     }
 
     public long getId() {
@@ -59,6 +70,10 @@ class PortableVehicle {
         return location;
     }
 
+    public long getDepotId() {
+        return depotId;
+    }    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,12 +86,13 @@ class PortableVehicle {
         return id == vehicle.id &&
                 capacity == vehicle.capacity &&
                 location.equals(vehicle.location) &&
-                name.equals(vehicle.name);
+                name.equals(vehicle.name) &&
+                depotId == vehicle.depotId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, capacity, location);
+        return Objects.hash(id, name, capacity, location, depotId);
     }
 
     @Override
@@ -86,6 +102,7 @@ class PortableVehicle {
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +
                 ", location=" + location +
+                ", depotId=" + depotId +
                 '}';
     }
 }

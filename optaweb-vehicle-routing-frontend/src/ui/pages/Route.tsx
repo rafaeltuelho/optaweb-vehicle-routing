@@ -30,14 +30,15 @@ import { connect } from 'react-redux';
 import { clientOperations } from 'store/client';
 import { UserViewport } from 'store/client/types';
 import { routeOperations } from 'store/route';
-import { LatLng, Location, RouteWithTrack } from 'store/route/types';
+import { Depot, LatLng, Location, RouteWithTrack, Vehicle } from 'store/route/types';
 import { AppState } from 'store/types';
 import LocationList from 'ui/components/LocationList';
 import RouteMap from 'ui/components/RouteMap';
 import { sideBarStyle } from 'ui/pages/common';
 
 export interface StateProps {
-  depot: Location | null;
+  vehicleCount: number;
+  depots: Depot[];
   visits: Location[];
   routes: RouteWithTrack[];
   boundingBox: [LatLng, LatLng] | null;
@@ -45,13 +46,19 @@ export interface StateProps {
 }
 
 export interface DispatchProps {
-  addHandler: typeof routeOperations.addLocation;
-  removeHandler: typeof routeOperations.deleteLocation;
+  addVisitHandler: typeof routeOperations.addLocation;
+  removeVisitHandler: typeof routeOperations.deleteLocation;
+  removeDepotHandler: typeof routeOperations.deleteDepot;
+  addVehicleHandler: typeof routeOperations.addVehicle,
+  addDepotVehicleHandler: typeof routeOperations.addDepotVehicle,
+  removeDepotVehicleHandler: typeof routeOperations.deleteDepotVehicle,
+  removeVehicleHandler: typeof routeOperations.deleteVehicle,
   updateViewport: typeof clientOperations.updateViewport;
 }
 
 const mapStateToProps = ({ plan, serverInfo, userViewport }: AppState): StateProps => ({
-  depot: plan.depot,
+  vehicleCount: plan.vehicles.length,
+  depots: plan.depots,
   visits: plan.visits,
   routes: plan.routes,
   boundingBox: serverInfo.boundingBox,
@@ -59,8 +66,13 @@ const mapStateToProps = ({ plan, serverInfo, userViewport }: AppState): StatePro
 });
 
 const mapDispatchToProps: DispatchProps = {
-  addHandler: routeOperations.addLocation,
-  removeHandler: routeOperations.deleteLocation,
+  addVisitHandler: routeOperations.addLocation,
+  removeVisitHandler: routeOperations.deleteLocation,
+  removeDepotHandler: routeOperations.deleteDepot,
+  addVehicleHandler: routeOperations.addVehicle,
+  removeVehicleHandler: routeOperations.deleteVehicle,
+  addDepotVehicleHandler: routeOperations.addDepotVehicle,
+  removeDepotVehicleHandler: routeOperations.deleteDepotVehicle,
   updateViewport: clientOperations.updateViewport,
 };
 
@@ -84,7 +96,7 @@ export class Route extends React.Component<RouteProps, RouteState> {
   }
 
   handleMapClick(e: any) {
-    this.props.addHandler({ ...e.latlng, description: '' });
+    this.props.addVisitHandler({ ...e.latlng, description: '' });
   }
 
   onSelectLocation(id: number) {
@@ -94,12 +106,18 @@ export class Route extends React.Component<RouteProps, RouteState> {
   render() {
     const { selectedId, selectedRouteId } = this.state;
     const {
+      vehicleCount,
       boundingBox,
       userViewport,
-      depot,
+      depots,
       visits,
       routes,
-      removeHandler,
+      removeVisitHandler,
+      removeDepotHandler,
+      addVehicleHandler,
+      removeVehicleHandler,
+      addDepotVehicleHandler,
+      removeDepotVehicleHandler,
       updateViewport,
     } = this.props;
 
@@ -142,9 +160,9 @@ export class Route extends React.Component<RouteProps, RouteState> {
               </FormSelect>
             </Form>
             <LocationList
-              depot={depot}
+              depots={depots}
               visits={filteredVisits}
-              removeHandler={removeHandler}
+              removeHandler={removeVisitHandler}
               selectHandler={this.onSelectLocation}
             />
           </SplitItem>
@@ -155,8 +173,14 @@ export class Route extends React.Component<RouteProps, RouteState> {
               updateViewport={updateViewport}
               selectedId={selectedId}
               clickHandler={this.handleMapClick}
-              removeHandler={removeHandler}
-              depot={depot}
+              removeVisitHandler={removeVisitHandler}
+              removeDepotHandler={removeDepotHandler}
+              addVehicleHandler={addVehicleHandler}
+              removeVehicleHandler={removeVehicleHandler}
+              addDepotVehicleHandler={addDepotVehicleHandler}
+              removeDepotVehicleHandler={removeDepotVehicleHandler}
+              // vehicleCount={vehicleCount}
+              depots={depots}
               visits={visits}
               routes={filteredRoutes}
             />

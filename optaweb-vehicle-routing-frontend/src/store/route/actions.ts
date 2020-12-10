@@ -17,22 +17,39 @@
 import { ActionFactory } from '../types';
 import {
   ActionType,
+  AddDepotAction,
+  DeleteDepotAction,
   AddLocationAction,
   AddVehicleAction,
+  AddDepotVehicleAction,
   ClearRouteAction,
   DeleteLocationAction,
   DeleteVehicleAction,
+  DeleteDepotVehicleAction,
+  Depot,
   LatLngWithTypeDescription,
   RoutingPlan,
   UpdateRouteAction,
+  Vehicle,
 } from './types';
 
-export const addVehicle: ActionFactory<void, AddVehicleAction> = () => ({
+export const addVehicle: ActionFactory<Vehicle, AddVehicleAction> = (vehicle) => ({
   type: ActionType.ADD_VEHICLE,
+  value: vehicle,
 });
 
 export const deleteVehicle: ActionFactory<number, DeleteVehicleAction> = (id) => ({
   type: ActionType.DELETE_VEHICLE,
+  value: id,
+});
+
+export const addDepotVehicle: ActionFactory<Vehicle, AddDepotVehicleAction> = (vehicle) => ({
+  type: ActionType.ADD_DEPOT_VEHICLE,
+  value: vehicle,
+});
+
+export const deleteDepotVehicle: ActionFactory<number, DeleteDepotVehicleAction> = (id) => ({
+  type: ActionType.DELETE_DEPOT_VEHICLE,
   value: id,
 });
 
@@ -43,6 +60,16 @@ export const addLocation: ActionFactory<LatLngWithTypeDescription, AddLocationAc
 
 export const deleteLocation: ActionFactory<number, DeleteLocationAction> = (id) => ({
   type: ActionType.DELETE_LOCATION,
+  value: id,
+});
+
+export const addDepot: ActionFactory<LatLngWithTypeDescription, AddDepotAction> = (depot) => ({
+  type: ActionType.ADD_DEPOT,
+  value: depot,
+});
+
+export const deleteDepot: ActionFactory<number, DeleteDepotAction> = (id) => ({
+  type: ActionType.DELETE_DEPOT,
   value: id,
 });
 

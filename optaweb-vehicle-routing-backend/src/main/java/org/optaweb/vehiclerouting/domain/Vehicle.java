@@ -24,7 +24,12 @@ public class Vehicle extends VehicleData {
     private final long id;
 
     Vehicle(long id, String name, int capacity, Location location) {
-        super(name, capacity, location);
+        super(name, capacity, location, 0);
+        this.id = id;
+    }
+
+    Vehicle(long id, String name, int capacity, Location location, long depotId) {
+        super(name, capacity, location, depotId);
         this.id = id;
     }
 

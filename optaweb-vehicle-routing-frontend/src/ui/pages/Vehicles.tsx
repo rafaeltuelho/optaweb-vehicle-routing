@@ -66,7 +66,7 @@ export const Vehicles: React.FC<Props> = ({
       <SplitItem isFilled={false}>
         <Button
           style={{ marginBottom: 16, marginLeft: 16 }}
-          onClick={addVehicleHandler}
+          // onClick={addVehicleHandler}
         >
           Add
         </Button>

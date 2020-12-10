@@ -95,18 +95,19 @@ public class LocationService {
             return;
         }
         Location removedLocation = optionalLocation.get();
-        List<Location> locations = repository.locations();
-        if (locations.size() > 1) {
-            Location depot = locations.stream()
-                    .min(comparingLong(Location::id))
-                    .orElseThrow(() -> new IllegalStateException(
-                            "Impossible. Locations have size (" + locations.size() + ") but the stream is empty."));
-            if (removedLocation.equals(depot)) {
-                eventPublisher.publishEvent(
-                        new ErrorEvent(this, "You can only remove depot if there are no visits."));
-                return;
-            }
-        }
+        // List<Location> locations = repository.locations();
+        // if (locations.size() > 1) {
+        //     // FIX ME: Depot is not the first added Location anymore!!!
+        //     Location depot = locations.stream()
+        //             .min(comparingLong(Location::id)) 
+        //             .orElseThrow(() -> new IllegalStateException(
+        //                     "Impossible. Locations have size (" + locations.size() + ") but the stream is empty."));
+        //     if (removedLocation.equals(depot)) {
+        //         eventPublisher.publishEvent(
+        //                 new ErrorEvent(this, "You can only remove depot if there are no visits."));
+        //         return;
+        //     }
+        // }
 
         optimizer.removeLocation(removedLocation);
         repository.removeLocation(id);

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { produce } from 'immer';
 import { ActionType, RouteAction, RoutingPlan } from './types';
 
 export const initialRouteState: RoutingPlan = {
@@ -29,7 +30,43 @@ export const routeReducer = (state = initialRouteState, action: RouteAction): Ro
     case ActionType.UPDATE_ROUTING_PLAN: {
       return action.plan;
     }
-    default:
+    case ActionType.ADD_VEHICLE: {
+      console.debug('Vehicle added!');
+      console.debug(action);
+      console.debug('Vehicle Id (action value) ', action.value);
+      // state.depots[0].vehicles;
       return state;
+    }
+    case ActionType.DELETE_VEHICLE: {
+      console.debug('Vehicle deleted!');
+      console.debug(action);
+      console.debug('Vehicle Id (action value) ', action.value);
+      return state;
+    }
+    case ActionType.ADD_DEPOT_VEHICLE: {
+      let vehicle = action.value;
+      console.debug('Depot\'s vehicle list updated');
+      console.debug(action);
+      console.debug('Updating Depot\'s vehicle list ');
+      console.debug('Vehicle Id (action value) ', vehicle);
+
+      // let newState = produce(state, draftState => {
+      //   draftState.depots.find(d => d.id == vehicle.depotId)?.vehicles.push(vehicle.id);
+      // })
+      
+      return state;
+    }
+    case ActionType.DELETE_DEPOT_VEHICLE: {
+      console.debug('Depot\'s vehicle list updated');
+      console.debug(action);
+      console.debug('Updating Depot\'s vehicle list ');
+      console.debug('Vehicle Id (action value) ', action.value);
+      return state;
+    }
+    default: {
+      console.debug('routeReducer() default reducer ');
+      console.debug('Action Type: ', action.type);
+      return state;
+    }
   }
 };

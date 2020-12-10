@@ -37,7 +37,7 @@ import { clientOperations } from 'store/client';
 import { UserViewport } from 'store/client/types';
 import { demoOperations } from 'store/demo';
 import { routeOperations } from 'store/route';
-import { LatLng, LatLngWithTypeDescription, Location, RouteWithTrack } from 'store/route/types';
+import { Depot, LatLng, LatLngWithTypeDescription, Location, RouteWithTrack } from 'store/route/types';
 import { AppState } from 'store/types';
 import { DemoDropdown } from 'ui/components/DemoDropdown';
 import LocationList from 'ui/components/LocationList';
@@ -51,7 +51,7 @@ export const ID_EXPORT_BUTTON = 'export-button';
 
 export interface StateProps {
   distance: string;
-  depots: Location[];
+  depots: Depot[];
   vehicleCount: number;
   visits: Location[];
   routes: RouteWithTrack[];
@@ -66,9 +66,13 @@ export interface DispatchProps {
   loadHandler: typeof demoOperations.requestDemo;
   clearHandler: typeof routeOperations.clearRoute;
   addLocationHandler: typeof routeOperations.addLocation;
-  removeLocationHandler: typeof routeOperations.deleteLocation;
+  addDepotHandler: typeof routeOperations.addDepot;
+  removeVisitHandler: typeof routeOperations.deleteLocation;
+  removeDepotHandler: typeof routeOperations.deleteDepot;
   addVehicleHandler: typeof routeOperations.addVehicle;
-  removeVehicleHandler: typeof routeOperations.deleteAnyVehicle;
+  removeVehicleHandler: typeof routeOperations.deleteVehicle;
+  addDepotVehicleHandler: typeof routeOperations.addDepotVehicle;
+  removeDepotVehicleHandler: typeof routeOperations.deleteDepotVehicle;
   updateViewport: typeof clientOperations.updateViewport;
 }
 
@@ -91,9 +95,13 @@ const mapDispatchToProps: DispatchProps = {
   loadHandler: demoOperations.requestDemo,
   clearHandler: routeOperations.clearRoute,
   addLocationHandler: routeOperations.addLocation,
-  removeLocationHandler: routeOperations.deleteLocation,
+  addDepotHandler: routeOperations.addDepot,
+  removeVisitHandler: routeOperations.deleteLocation,
+  removeDepotHandler: routeOperations.deleteDepot,
   addVehicleHandler: routeOperations.addVehicle,
-  removeVehicleHandler: routeOperations.deleteAnyVehicle,
+  removeVehicleHandler: routeOperations.deleteVehicle,
+  addDepotVehicleHandler: routeOperations.addDepotVehicle,
+  removeDepotVehicleHandler: routeOperations.deleteDepotVehicle,
   updateViewport: clientOperations.updateViewport,
 };
 
@@ -112,7 +120,9 @@ export class Demo extends React.Component<DemoProps, DemoState> {
     };
     this.handleDemoLoadClick = this.handleDemoLoadClick.bind(this);
     this.handleMapClick = this.handleMapClick.bind(this);
-    this.handleSearchResultClick = this.handleSearchResultClick.bind(this);
+    this.handleAddVisitClick = this.handleAddVisitClick.bind(this);
+    this.handleAddDepotClick = this.handleAddDepotClick.bind(this);
+    this.handleAddVehicleClick = this.handleAddVehicleClick.bind(this);
     this.onSelectLocation = this.onSelectLocation.bind(this);
   }
 
@@ -120,8 +130,17 @@ export class Demo extends React.Component<DemoProps, DemoState> {
     this.props.addLocationHandler({ ...e.latlng, description: '' }); // TODO use reverse geocoding to find address
   }
 
-  handleSearchResultClick(result: Result) {
+  handleAddVisitClick(result: Result) {
     this.props.addLocationHandler({ ...result.latLng, description: result.address });
+  }
+
+  handleAddDepotClick(result: Result) {
+    this.props.addDepotHandler({ ...result.latLng, description: result.address });
+  }
+
+  handleAddVehicleClick(result: Result) {
+    //TODO: implement addVehicle
+    // this.props.addVehicleHandler({ ...result.latLng, description: result.address });
   }
 
   handleDemoLoadClick(demoName: string) {
@@ -147,7 +166,10 @@ export class Demo extends React.Component<DemoProps, DemoState> {
       countryCodeSearchFilter,
       addVehicleHandler,
       removeVehicleHandler,
-      removeLocationHandler,
+      addDepotVehicleHandler,
+      removeDepotVehicleHandler,
+      removeVisitHandler,
+      removeDepotHandler,
       clearHandler,
       updateViewport,
     } = this.props;
@@ -169,12 +191,14 @@ export class Demo extends React.Component<DemoProps, DemoState> {
           <SearchBox
             boundingBox={boundingBox}
             countryCodeSearchFilter={countryCodeSearchFilter}
-            addHandler={this.handleSearchResultClick}
+            addVisitHandler={this.handleAddVisitClick}
+            addDepotHandler={this.handleAddDepotClick}
+            addVehicleHandler={this.handleAddVehicleClick}
           />
           <LocationList
             depots={depots}
             visits={visits}
-            removeHandler={removeLocationHandler}
+            removeHandler={removeVisitHandler}
             selectHandler={this.onSelectLocation}
           />
         </SplitItem>
@@ -184,7 +208,7 @@ export class Demo extends React.Component<DemoProps, DemoState> {
           style={{ display: 'flex', flexDirection: 'column' }}
         >
           <Flex breakpointMods={[{ modifier: FlexModifiers['justify-content-space-between'] }]}>
-            <FlexItem>
+            {/* <FlexItem>
               <Flex>
                 <FlexItem>
                   <InputGroup>
@@ -211,7 +235,7 @@ export class Demo extends React.Component<DemoProps, DemoState> {
                   <VehiclesInfo />
                 </FlexItem>
               </Flex>
-            </FlexItem>
+            </FlexItem> */}
             <FlexItem>
               <VisitsInfo visitCount={visits.length} />
             </FlexItem>
@@ -251,7 +275,13 @@ export class Demo extends React.Component<DemoProps, DemoState> {
             updateViewport={updateViewport}
             selectedId={selectedId}
             clickHandler={this.handleMapClick}
-            removeHandler={removeLocationHandler}
+            removeVisitHandler={removeVisitHandler}
+            removeDepotHandler={removeDepotHandler}
+            addVehicleHandler={addVehicleHandler}
+            removeVehicleHandler={removeVehicleHandler}
+            addDepotVehicleHandler={addDepotVehicleHandler}
+            removeDepotVehicleHandler={removeDepotVehicleHandler}
+            // vehicleCount={vehicleCount}
             depots={depots}
             routes={routes}
             visits={visits}

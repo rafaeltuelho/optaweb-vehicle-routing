@@ -16,7 +16,7 @@
 
 import SockJS from 'sockjs-client';
 import { MessagePayload } from 'store/message/types';
-import { LatLngWithTypeDescription, RoutingPlan } from 'store/route/types';
+import { LatLngWithTypeDescription, RoutingPlan, Vehicle } from 'store/route/types';
 import { ServerInfo } from 'store/server/types';
 import { Client, Frame, over } from 'webstomp-client';
 
@@ -55,9 +55,15 @@ export default class WebSocketClient {
     }
   }
 
-  addVehicle() {
+  addDepot(latLng: LatLngWithTypeDescription) {
     if (this.stompClient) {
-      this.stompClient.send('/app/vehicle');
+      this.stompClient.send('/app/location', JSON.stringify(latLng));
+    }
+  }
+
+  addVehicle(vehicle: Vehicle) {
+    if (this.stompClient) {
+      this.stompClient.send('/app/vehicle', JSON.stringify(vehicle));
     }
   }
 
@@ -70,6 +76,12 @@ export default class WebSocketClient {
   deleteLocation(locationId: number) {
     if (this.stompClient) {
       this.stompClient.send(`/app/location/${locationId}/delete`, JSON.stringify(locationId)); // TODO no body
+    }
+  }
+
+  deleteDepot(depotId: number) {
+    if (this.stompClient) {
+      this.stompClient.send(`/app/location/${depotId}/delete`, JSON.stringify(depotId)); // TODO no body
     }
   }
 

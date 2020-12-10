@@ -18,16 +18,23 @@ import * as L from 'leaflet';
 import * as React from 'react';
 import { Map, Polyline, Rectangle, TileLayer, ZoomControl } from 'react-leaflet';
 import { UserViewport } from 'store/client/types';
-import { LatLng, Location, LocationType, RouteWithTrack } from 'store/route/types';
+import { Depot, LatLng, Location, LocationType, RouteWithTrack, Vehicle } from 'store/route/types';
 import LocationMarker from './LocationMarker';
+import DepotMarker from './DepotMarker';
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface Props {
   selectedId: number;
+  // vehicleCount: number;
   clickHandler: (e: React.SyntheticEvent<HTMLElement>) => void;
-  removeHandler: (id: number) => void;
-  depots: Location[];
+  removeVisitHandler: (id: number) => void;
+  removeDepotHandler: (id: number) => void;
+  addVehicleHandler: (vehicle: Vehicle) => void;
+  removeVehicleHandler: (id: number) => void;
+  addDepotVehicleHandler: (vehicle: Vehicle) => void;
+  removeDepotVehicleHandler: (id: number) => void;
+  depots: Depot[];
   visits: Location[];
   routes: Omit<RouteWithTrack, 'vehicle'>[];
   boundingBox: [LatLng, LatLng] | null;
@@ -46,11 +53,17 @@ const RouteMap: React.FC<Props> = ({
   boundingBox,
   userViewport,
   selectedId,
+  // vehicleCount,
   depots,
   visits,
   routes,
   clickHandler,
-  removeHandler,
+  removeVisitHandler,
+  removeDepotHandler,
+  addVehicleHandler,
+  removeVehicleHandler,  
+  addDepotVehicleHandler,
+  removeDepotVehicleHandler,  
   updateViewport,
 }) => {
   const bounds = boundingBox ? new L.LatLngBounds(boundingBox[0], boundingBox[1]) : undefined;
@@ -76,14 +89,18 @@ const RouteMap: React.FC<Props> = ({
       />
       <ZoomControl position="topright" />
       {depots.map((depot) => (
-          <LocationMarker
+          <DepotMarker
             key={depot.id}
-            location={depot}
-            // isDepot
-            isDepot={depot.type === LocationType.Depot}
+            depot={depot}
             isSelected={depot.id === selectedId}
-            removeHandler={removeHandler}
+            vehicleCount={0}
+            removeHandler={removeDepotHandler}
+            addVehicleHandler={addVehicleHandler}
+            removeVehicleHandler={removeVehicleHandler}
+            addDepotVehicleHandler={addDepotVehicleHandler}
+            removeDepotVehicleHandler={removeDepotVehicleHandler}
           />
+
       ))}
       {visits.map((location) => (
         <LocationMarker
@@ -91,8 +108,8 @@ const RouteMap: React.FC<Props> = ({
           location={location}
           isDepot={false}
           isSelected={location.id === selectedId}
-          removeHandler={removeHandler}
-        />
+          removeHandler={removeVisitHandler}
+      />
       ))}
       {routes.map((route, index) => (
         <Polyline

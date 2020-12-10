@@ -30,10 +30,23 @@ public class VehicleFactory {
      *
      * @param name vehicle's name
      * @param capacity vehicle's capacity
+     * @param depot vehicle's depotId
      * @return vehicle data
      */
-    public static VehicleData vehicleData(String name, int capacity, Location location) {
-        return new VehicleData(name, capacity, location);
+    // public static VehicleData vehicleData(String name, int capacity, Location location) {
+    //     return new VehicleData(name, capacity, location, 0);
+    // }
+
+    /**
+     * Create vehicle data.
+     *
+     * @param name vehicle's name
+     * @param capacity vehicle's capacity
+     * @param depot vehicle's depotId
+     * @return vehicle data
+     */
+    public static VehicleData vehicleData(String name, int capacity, Location location, long depotId) {
+        return new VehicleData(name, capacity, location, depotId);
     }
 
     /**
@@ -45,8 +58,22 @@ public class VehicleFactory {
      * @param location vehicle's location
      * @return new vehicle
      */
-    public static Vehicle createVehicle(long id, String name, int capacity, Location location) {
-        return new Vehicle(id, name, capacity, location);
+    // public static Vehicle createVehicle(long id, String name, int capacity, Location location) {
+    //     return new Vehicle(id, name, capacity, location, 0);
+    // }
+
+    /**
+     * Create a new vehicle with the given ID, name capacity, location and depotId.
+     *
+     * @param id vehicle's ID
+     * @param name vehicle's name
+     * @param capacity vehicle's capacity
+     * @param location vehicle's location
+     * @param depot vehicle's depotId
+     * @return new vehicle
+     */
+    public static Vehicle createVehicle(long id, String name, int capacity, Location location, long depotId) {
+        return new Vehicle(id, name, capacity, location, depotId);
     }
 
     /**
@@ -56,7 +83,7 @@ public class VehicleFactory {
      * @return new testing vehicle instance
      */
     public static Vehicle testVehicle(long id) {
-        return new Vehicle(id, "Vehicle " + id, 0, new Location(0L, LocationType.VEHICLE, Coordinates.valueOf(.1, .1)));
+        return new Vehicle(id, "Vehicle " + id, 0, new Location(0L, LocationType.VEHICLE, Coordinates.valueOf(.1, .1)), 1);
     }
 
     /**
@@ -67,7 +94,7 @@ public class VehicleFactory {
      * @return new testing vehicle instance
      */
     public static Vehicle testVehicle(long id, Location location) {
-        return new Vehicle(id, "Vehicle " + id, 0, location);
+        return new Vehicle(id, "Vehicle " + id, 0, location, 1);
     }
 
 }

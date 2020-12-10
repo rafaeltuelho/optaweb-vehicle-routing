@@ -17,6 +17,7 @@
 package org.optaweb.vehiclerouting.plugin.persistence;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -36,9 +37,12 @@ public class VehicleEntity {
     private long id;
     private String name;
     private int capacity;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "LOCATION_ID", referencedColumnName = "id")
     private LocationEntity location;
+    //FIX ME: Depot must be an Entity!!!
+    @Column(name = "DEPOT_ID")
+    private long depot;
 
     protected VehicleEntity() {
         // for JPA
@@ -51,11 +55,12 @@ public class VehicleEntity {
         this.capacity = capacity;
     }
 
-    public VehicleEntity(long id, String name, int capacity, LocationEntity location) {
+    public VehicleEntity(long id, String name, int capacity, LocationEntity location, long depot) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.location = location;
+        this.depot = depot;
     }
 
     public long getId() {
@@ -74,8 +79,8 @@ public class VehicleEntity {
         return location;
     }
 
-    public void setLocation(LocationEntity location) {
-        this.location = location;
+    public long getDepot(){
+        return depot;
     }
 
     @Override
@@ -85,6 +90,7 @@ public class VehicleEntity {
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +
                 ", location=" + location +
+                ", depotId=" + depot +
                 '}';
     }
 

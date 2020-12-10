@@ -19,12 +19,13 @@ import { FinishLoadingAction } from '../demo/types';
 import { messageActions } from '../message';
 import { MessageAction } from '../message/types';
 import { routeOperations } from '../route';
-import { UpdateRouteAction } from '../route/types';
+import { UpdateRouteAction, Vehicle } from '../route/types';
 import { serverOperations } from '../server';
 import { ServerInfoAction } from '../server/types';
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import { WebSocketAction } from './types';
+import { produce } from 'immer';
 
 type ConnectClientThunkAction =
   | WebSocketAction
@@ -51,7 +52,25 @@ export const connectClient: ThunkCommandFactory<void, ConnectClientThunkAction> 
           dispatch(messageActions.receiveMessage(errorMessage));
         });
         client.subscribeToRoute((plan) => {
-          dispatch(routeOperations.updateRoute(plan));
+          // agregate vehicles per depot and update Depot's vehicle list.
+          // this is done here in the front-end becuse we don't have Depot<->Vehicle association on the back-end by now
+          let clonnedPlan = produce(plan, draftPlan => {
+            let originalDepots = draftPlan.depots;
+            let updatedDepots = originalDepots.map((depot) => {
+              let depotVehicles: number[] = [];
+              draftPlan.vehicles.filter(v => v.depotId == depot.id).forEach(v => {
+                depotVehicles.push(v.id);
+              });
+              
+              console.debug('Depot [' + depot.id + '] vehicles ', depotVehicles);
+              return {...depot, vehicles: depotVehicles};
+            });
+
+            draftPlan.depots = updatedDepots;
+          });
+          // clonnedPlan.depots.map()      
+          
+          dispatch(routeOperations.updateRoute(clonnedPlan));
           if (getState().demo.isLoading) {
             // TODO handle the case when serverInfo doesn't contain demo with the given name
             //      (that could only be possible due to a bug in the code)

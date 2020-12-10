@@ -29,7 +29,10 @@ export const demoReducer = (state = initialState, action: DemoAction): Demo => {
     case ActionType.FINISH_LOADING: {
       return { ...state, isLoading: false };
     }
-    default:
+    default: {
+      console.debug('demoReducer() default reducer ');
+      console.debug('Action Type: ', action);
       return state;
+    }
   }
 };
