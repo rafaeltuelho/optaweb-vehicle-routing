@@ -16,9 +16,6 @@
 
 package org.optaweb.vehiclerouting.service.location;
 
-import static java.util.Comparator.comparingLong;
-
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 

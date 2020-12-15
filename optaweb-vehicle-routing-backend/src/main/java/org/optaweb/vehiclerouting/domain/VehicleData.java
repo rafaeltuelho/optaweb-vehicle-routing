@@ -67,10 +67,10 @@ public class VehicleData {
      *
      * @return vehicle's depot Id
      */
-	public long depotId() {
-		return depotId;
+    public long depotId() {
+        return depotId;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

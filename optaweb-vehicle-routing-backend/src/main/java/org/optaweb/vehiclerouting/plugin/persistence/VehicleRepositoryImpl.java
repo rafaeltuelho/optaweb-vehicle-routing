@@ -59,12 +59,12 @@ public class VehicleRepositoryImpl implements VehicleRepository {
         // if (!locationEntity.isPresent()) {
         //     //TODO: create the vehicle location or thow an IllegalArgumentException?
         //     logger.warn("Vehicle location {} does not exist yet.", vehicleData.location());
-            Location domainVehicleLocation = vehicleData.location();
-            LocationEntity vehiclelocationEntity = new LocationEntity(
-                    0L, domainVehicleLocation.type(),
-                    domainVehicleLocation.coordinates().latitude(), 
-                    domainVehicleLocation.coordinates().longitude(),
-                    domainVehicleLocation.description());
+        Location domainVehicleLocation = vehicleData.location();
+        LocationEntity vehiclelocationEntity = new LocationEntity(
+                0L, domainVehicleLocation.type(),
+                domainVehicleLocation.coordinates().latitude(),
+                domainVehicleLocation.coordinates().longitude(),
+                domainVehicleLocation.description());
         //     locationEntity = Optional.of(locationRepository.save(vehiclelocationEntity));
         //     logger.info("Created vehicle location {}.", vehiclelocationEntity);
         // }
@@ -72,7 +72,8 @@ public class VehicleRepositoryImpl implements VehicleRepository {
         // vehicleEntity.setLocation(vehiclelocationEntity);
 
         VehicleEntity vehicleEntity =
-                repository.save(new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity(), vehiclelocationEntity, vehicleData.depotId()));
+                repository.save(new VehicleEntity(0L, vehicleData.name(), vehicleData.capacity(), vehiclelocationEntity,
+                        vehicleData.depotId()));
         Vehicle vehicle = toDomain(vehicleEntity);
         logger.info("Created vehicle {}.", vehicle);
         return vehicle;
@@ -112,11 +113,12 @@ public class VehicleRepositoryImpl implements VehicleRepository {
         // Optional<LocationEntity> locationEntity = locationRepository.findById(vehicle.location().id());
         Location domainVehicleLocation = vehicle.location();
         LocationEntity vehiclelocationEntity = new LocationEntity(
-            domainVehicleLocation.id(), domainVehicleLocation.type(),
-            domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(),
-            domainVehicleLocation.description());
+                domainVehicleLocation.id(), domainVehicleLocation.type(),
+                domainVehicleLocation.coordinates().latitude(), domainVehicleLocation.coordinates().longitude(),
+                domainVehicleLocation.description());
 
-        repository.save(new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), vehiclelocationEntity, vehicle.depotId()));
+        repository.save(
+                new VehicleEntity(vehicle.id(), vehicle.name(), vehicle.capacity(), vehiclelocationEntity, vehicle.depotId()));
     }
 
     private static Vehicle toDomain(VehicleEntity vehicleEntity) {

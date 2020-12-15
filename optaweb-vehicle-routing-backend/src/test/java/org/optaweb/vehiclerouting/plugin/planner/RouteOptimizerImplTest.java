@@ -175,7 +175,7 @@ class RouteOptimizerImplTest {
         assertThat(solution.getVehicleList())
                 .hasSize(2)
                 .allMatch(vehicle -> vehicle.getDepot().getId() == vehicle.getLocation().getId()); // For now The Depot is actually the vehicle's initial Location
-                // .allMatch(vehicle -> vehicle.getDepot().getId() == location1.id());
+        // .allMatch(vehicle -> vehicle.getDepot().getId() == location1.id());
 
         assertThat(solution.getDepotList()).isNotEmpty();
         assertThat(solution.getVisitList()).isNotEmpty();
@@ -327,15 +327,15 @@ class RouteOptimizerImplTest {
         clearInvocations(routeChangedEventPublisher);
         // remove all vehicles associated to this depot before
         // expect to publishPreliminarySolution 3 times as there is no Visit added
-        routeOptimizer.removeVehicle(vehicle1); 
+        routeOptimizer.removeVehicle(vehicle1);
         routeOptimizer.removeVehicle(vehicle2);
         routeOptimizer.removeLocation(depot1);
 
         // then published solution's depot list is empty and the vehicles associated to that depot whas removed
         VehicleRoutingSolution solution2 = verifyPublishingPreliminarySolution(3);
         assertThat(solution2.getVehicleList())
-            .extracting(PlanningVehicle::getId)
-            .doesNotContain(vehicleId1, vehicleId2);        
+                .extracting(PlanningVehicle::getId)
+                .doesNotContain(vehicleId1, vehicleId2);
         // assertThat(solution2.getVehicleList())
         //         .extracting(PlanningVehicle::getId)
         //         .containsExactlyInAnyOrder(vehicleId1, vehicleId2);

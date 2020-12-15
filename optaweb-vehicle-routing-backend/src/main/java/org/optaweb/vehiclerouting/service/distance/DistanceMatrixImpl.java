@@ -91,7 +91,7 @@ class DistanceMatrixImpl implements DistanceMatrix {
     public DistanceMatrixRow getDistanceMatrix(Location existingLocation) {
         return locationId -> {
             return matrix.get(existingLocation).get(locationId);
-        };        
+        };
     }
 
     private Distance calculateOrRestoreDistance(Location from, Location to) {

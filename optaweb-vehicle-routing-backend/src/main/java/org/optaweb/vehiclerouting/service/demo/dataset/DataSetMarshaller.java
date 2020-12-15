@@ -122,7 +122,8 @@ public class DataSetMarshaller {
     }
 
     static DataSetVehicle toDataSet(VehicleData vehicleData) {
-        return new DataSetVehicle(vehicleData.name(), vehicleData.capacity(), toDataSet(vehicleData.location()), vehicleData.depotId());
+        return new DataSetVehicle(vehicleData.name(), vehicleData.capacity(), toDataSet(vehicleData.location()),
+                vehicleData.depotId());
     }
 
     static RoutingProblem toDomain(DataSet dataSet) {

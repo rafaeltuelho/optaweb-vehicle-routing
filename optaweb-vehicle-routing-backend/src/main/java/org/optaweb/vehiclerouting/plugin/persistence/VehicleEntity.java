@@ -19,7 +19,6 @@ package org.optaweb.vehiclerouting.plugin.persistence;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -79,7 +78,7 @@ public class VehicleEntity {
         return location;
     }
 
-    public long getDepot(){
+    public long getDepot() {
         return depot;
     }
 

@@ -21,9 +21,11 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.AnchorShadowVariable;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.domain.variable.PlanningVariableGraphType;
-import org.optaweb.vehiclerouting.plugin.planner.weight.DepotAngleVisitDifficultyWeightFactory;
 
-@PlanningEntity(difficultyWeightFactoryClass = DepotAngleVisitDifficultyWeightFactory.class)
+// import org.optaweb.vehiclerouting.plugin.planner.weight.DepotAngleVisitDifficultyWeightFactory;
+
+// @PlanningEntity(difficultyWeightFactoryClass = DepotAngleVisitDifficultyWeightFactory.class)
+@PlanningEntity
 public class PlanningVisit implements Standstill {
 
     @PlanningId

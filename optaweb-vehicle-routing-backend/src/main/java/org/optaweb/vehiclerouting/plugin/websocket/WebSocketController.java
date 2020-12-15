@@ -156,7 +156,7 @@ class WebSocketController {
     @MessageMapping("vehicle")
     void addVehicle(PortableVehicle request) {
         VehicleData vehicleData = VehicleFactory.vehicleData(
-                request.getName(), request.getCapacity(), 
+                request.getName(), request.getCapacity(),
                 PortableLocation.toDomainLocation(request.getLocation()),
                 request.getDepotId());
         vehicleService.createVehicleWithLocation(vehicleData);
@@ -164,7 +164,8 @@ class WebSocketController {
 
     /**
      * Delete vehicle.
-     *`
+     * `
+     * 
      * @param id ID of the vehicle to be deleted
      */
     @MessageMapping("/vehicle/{id}/delete")

@@ -108,7 +108,7 @@ class SolverIntegrationTest {
         for (int id = 3; id < 6; id++) {
             logger.info("Add visit ({})", id);
             monitor.beforeProblemFactChange();
-            solver.addProblemFactChange( new AddVisit(fromLocation(testLocation(id, mockDistanceMap()))) );
+            solver.addProblemFactChange(new AddVisit(fromLocation(testLocation(id, mockDistanceMap()))));
             assertThat(monitor.awaitAllProblemFactChanges(1000)).isTrue();
         }
 
@@ -151,7 +151,7 @@ class SolverIntegrationTest {
     private static DistanceMap mockDistanceMap() {
         return location -> 60;
     }
-    
+
     static class ProblemFactChangeProcessingMonitor implements SolverEventListener<VehicleRoutingSolution> {
 
         private static final Logger logger = LoggerFactory.getLogger(ProblemFactChangeProcessingMonitor.class);

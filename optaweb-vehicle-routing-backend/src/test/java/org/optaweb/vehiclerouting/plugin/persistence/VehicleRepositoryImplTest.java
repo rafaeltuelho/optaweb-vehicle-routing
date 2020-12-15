@@ -23,7 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -130,7 +129,6 @@ class VehicleRepositoryImplTest {
         // assert
         // -- the correct values were used to save the entity
         VehicleEntity savedVehicle = vehicleEntityCaptor.getValue();
-
 
         assertThat(savedVehicle.getName()).isEqualTo(vehicleData.name());
         assertThat(savedVehicle.getCapacity()).isEqualTo(vehicleData.capacity());

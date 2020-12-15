@@ -60,8 +60,8 @@ class RouteOptimizerImpl implements RouteOptimizer {
     private final List<PlanningDepot> depots = new ArrayList<>();
 
     @Autowired
-    RouteOptimizerImpl(SolverManager solverManager, RouteChangedEventPublisher routeChangedEventPublisher, 
-        LocationRepository locationRepository, DistanceMatrix distanceMatrix) {
+    RouteOptimizerImpl(SolverManager solverManager, RouteChangedEventPublisher routeChangedEventPublisher,
+            LocationRepository locationRepository, DistanceMatrix distanceMatrix) {
         this.solverManager = solverManager;
         this.routeChangedEventPublisher = routeChangedEventPublisher;
         this.locationRepository = locationRepository;
@@ -74,12 +74,17 @@ class RouteOptimizerImpl implements RouteOptimizer {
                 domainLocation,
                 new DistanceMapImpl(distanceMatrixRow));
         if (domainLocation.type() == LocationType.DEPOT) {
-            depots.add(new PlanningDepot(location));
-            publishSolution(); // publish just to update the view on client-side (front-end)
+            PlanningDepot depot = new PlanningDepot(location);
+            depots.add(depot);
+            if (vehicles.isEmpty()) {
+                publishSolution(); // publish just to update the view on client-side (front-end)
+            } else if (!visits.isEmpty()) {
+                solverManager.addDepot(depot);
+            }
         } else { // Does all the other types should be considered Visits?
             PlanningVisit visit = PlanningVisitFactory.fromLocation(location);
             visits.add(visit);
-            if (vehicles.isEmpty() || depots.isEmpty()) { // FIX ME: actually, there is no vehicle without depot... 
+            if (vehicles.isEmpty() || depots.isEmpty()) {
                 publishSolution(); // publish just to update the view on client-side (front-end)
             } else if (visits.size() == 1) {
                 solverManager.startSolver(SolutionFactory.solutionFromVisits(vehicles, depots, visits));
@@ -160,7 +165,8 @@ class RouteOptimizerImpl implements RouteOptimizer {
             throw new IllegalArgumentException("Depot [" + domainVehicle.depotId() + "] not found! This should not happen.");
 
         DistanceMatrixRow distanceMatrixRow = distanceMatrix.getDistanceMatrix(depotLocation.get());
-        PlanningDepot planningDepot = new PlanningDepot(PlanningLocationFactory.fromDomain(depotLocation.get(), new DistanceMapImpl(distanceMatrixRow)));
+        PlanningDepot planningDepot = new PlanningDepot(
+                PlanningLocationFactory.fromDomain(depotLocation.get(), new DistanceMapImpl(distanceMatrixRow)));
 
         vehicle.setDepot(planningDepot);
 

@@ -21,15 +21,10 @@ import static java.util.Comparator.comparingLong;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.optaweb.vehiclerouting.domain.Location;
 import org.optaweb.vehiclerouting.domain.Vehicle;
 import org.optaweb.vehiclerouting.domain.VehicleData;
 import org.optaweb.vehiclerouting.domain.VehicleFactory;
-import org.optaweb.vehiclerouting.plugin.planner.DistanceMapImpl;
-import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningDepot;
-import org.optaweb.vehiclerouting.plugin.planner.domain.PlanningLocationFactory;
 import org.optaweb.vehiclerouting.service.location.DistanceMatrix;
-import org.optaweb.vehiclerouting.service.location.DistanceMatrixRow;
 import org.optaweb.vehiclerouting.service.location.LocationRepository;
 import org.optaweb.vehiclerouting.service.location.RouteOptimizer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +104,8 @@ public class VehicleService {
     public void changeCapacity(long vehicleId, int capacity) {
         Vehicle vehicle = vehicleRepository.find(vehicleId).orElseThrow(
                 () -> new IllegalArgumentException("Can't remove Vehicle{id=" + vehicleId + "} because it doesn't exist"));
-        Vehicle updatedVehicle = VehicleFactory.createVehicle(vehicle.id(), vehicle.name(), capacity, vehicle.location(), vehicle.depotId());
+        Vehicle updatedVehicle =
+                VehicleFactory.createVehicle(vehicle.id(), vehicle.name(), capacity, vehicle.location(), vehicle.depotId());
         vehicleRepository.update(updatedVehicle);
         optimizer.changeCapacity(updatedVehicle);
     }

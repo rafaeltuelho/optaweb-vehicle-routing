@@ -18,10 +18,10 @@ package org.optaweb.vehiclerouting.plugin.websocket;
 
 import java.util.Objects;
 
+import org.optaweb.vehiclerouting.domain.Vehicle;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.optaweb.vehiclerouting.domain.Vehicle;
 
 /**
  * {@link Vehicle} representation suitable for network transport.
@@ -37,16 +37,17 @@ class PortableVehicle {
     static PortableVehicle fromVehicle(Vehicle vehicle) {
         Objects.requireNonNull(vehicle, "vehicle must not be null");
         return new PortableVehicle(
-                vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()), vehicle.depotId());
+                vehicle.id(), vehicle.name(), vehicle.capacity(), PortableLocation.fromDomainLocation(vehicle.location()),
+                vehicle.depotId());
     }
 
     @JsonCreator
     PortableVehicle(
-        @JsonProperty(value = "id") long id, 
-        @JsonProperty(value = "name") String name, 
-        @JsonProperty(value = "capacity") int capacity, 
-        @JsonProperty(value = "location") PortableLocation location,
-        @JsonProperty(value = "depotId") long depotId) {
+            @JsonProperty(value = "id") long id,
+            @JsonProperty(value = "name") String name,
+            @JsonProperty(value = "capacity") int capacity,
+            @JsonProperty(value = "location") PortableLocation location,
+            @JsonProperty(value = "depotId") long depotId) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.capacity = capacity;
@@ -72,7 +73,7 @@ class PortableVehicle {
 
     public long getDepotId() {
         return depotId;
-    }    
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -33,9 +33,9 @@ public class AddDepot implements ProblemFactChange<VehicleRoutingSolution> {
 
     @Override
     public void doChange(ScoreDirector<VehicleRoutingSolution> scoreDirector) {
-        scoreDirector.beforeEntityAdded(depot);
+        scoreDirector.beforeProblemFactAdded(depot);
         scoreDirector.getWorkingSolution().getDepotList().add(depot);
-        scoreDirector.afterEntityAdded(depot);
+        scoreDirector.afterProblemFactAdded(depot);
 
         scoreDirector.triggerVariableListeners();
     }

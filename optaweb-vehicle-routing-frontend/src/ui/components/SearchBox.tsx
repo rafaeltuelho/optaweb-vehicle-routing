@@ -170,13 +170,10 @@ class SearchBox extends React.Component<Props, State> {
                     <Split gutter={GutterSize.md} style={{ overflowY: 'auto', overflowX: 'auto' }}>
                       <SplitItem
                         isFilled={true}
-                        style={{ display: 'grid', flexDirection: 'column' }}
                       >
                         {result.address}
                       </SplitItem>
                       <SplitItem
-                        isFilled={true}
-                        style={{ display: 'grid', flexDirection: 'column' }}
                       >
                         <Button
                           className="pf-c-options-menu__menu-item-icon"
@@ -189,8 +186,6 @@ class SearchBox extends React.Component<Props, State> {
                         </Button>
                       </SplitItem>
                       <SplitItem
-                        isFilled={true}
-                        style={{ display: 'grid', flexDirection: 'column' }}
                       >
                         <Button
                           className="pf-c-options-menu__menu-item-icon"
@@ -203,8 +198,6 @@ class SearchBox extends React.Component<Props, State> {
                         </Button>
                       </SplitItem>
                       <SplitItem
-                        isFilled={true}
-                        style={{ display: 'grid', flexDirection: 'column' }}
                       >
                         <Button
                           className="pf-c-options-menu__menu-item-icon"
